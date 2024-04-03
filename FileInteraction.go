@@ -8,6 +8,17 @@ import (
 	"os"
 )
 
+//			  1   2  3  4  5   6
+//1 string = key:key:-:key:-:key
+//             3     5
+//2 string = trash:trash
+//[6; infinitive] = value
+// 					value
+//					  -
+//					value
+//					  -
+//					value
+
 func LineCounter(fullpath string) (int, error) {
 	buf := make([]byte, 1*1024) //1 Kbyte
 	count := 0
