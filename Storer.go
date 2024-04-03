@@ -1,16 +1,8 @@
 package butterfly
 
-type Storer struct {
-
+type Storer[K comparable, V any] interface {
+	Put(K, V) error
+	Get(K) (V, error)
+	Update(K, V) error
+	Delete(K) (V, error)
 }
-
-//			  1   2  3  4  5   6
-//1 string = key:key:-:key:-:key
-//             3     5
-//2 string = trash:trash
-//[3; infinitive] = value
-// 					value
-//					  -
-//					value
-//					  -
-//					value
