@@ -19,13 +19,6 @@ func NewDustStore[K comparable, V any]() *DustStore[K, V] {
 }
 
 
-// Has checks if the given is present in the store
-// NOTE: DON`T use in CONCURENT safe. Should be used whith the lock.
-func (a *DustStore[K, V]) Has(key K) bool {
-	_, ok := a.dust[key]
-	return ok
-}
-
 func (a *DustStore[K, V]) Put(key K, value V) error {
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -49,7 +42,8 @@ func (a *DustStore[K, V]) Update(key K, value V) error {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
-	if !a.Has(key) {
+	_, ok := a.dust[key]
+	if !ok {
 		return fmt.Errorf("the key (%v) does not exists", key)
 	}
 

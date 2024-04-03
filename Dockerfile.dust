@@ -1,0 +1,21 @@
+FROM golang:1.22.1-alpine3.19 as builder
+
+WORKDIR /build
+
+#Dependencies
+COPY ["go.mod", "go.sum", "./"]
+RUN go mod download
+
+#Build
+COPY . .
+RUN go build -o ./bin/dust ./dust/main.go
+
+#WorkSpace
+FROM alpine:3.19 as runner
+
+WORKDIR /dust
+COPY --from=builder /build/bin/dust /dust/dust
+
+#Run
+EXPOSE 1615-1615
+CMD [ "./dust" ]
