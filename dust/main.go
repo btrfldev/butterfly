@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/TinajXD/butterfly"
@@ -74,6 +75,7 @@ func (s *Server) Start() error {
 }
 
 func main() {
-	s := NewServer("0.0.0.0:1615")
+	port := os.Getenv("PORT")
+	s := NewServer(":" + port)
 	log.Fatal(s.Start())
 }
