@@ -16,7 +16,7 @@ FROM alpine:3.19 as runner
 WORKDIR /dust
 COPY --from=builder /build/bin/dust /dust/dust
 
-ARG PORT=1615
+ENV PORT=1615
 
 #Run
 EXPOSE 1615-1615
