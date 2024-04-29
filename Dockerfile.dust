@@ -17,6 +17,8 @@ WORKDIR /dust
 COPY --from=builder /build/bin/dust /dust/dust
 
 ENV PORT=1615
+ENV TIMEOUT=60
+ENV BODYLIMIT=1099511627776
 
 #Run
 EXPOSE 1615-1615

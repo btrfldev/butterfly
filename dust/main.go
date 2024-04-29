@@ -1,24 +1,48 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
-	"github.com/TinajXD/butterfly"
+	//"github.com/TinajXD/butterfly"
 	"github.com/gofiber/fiber/v2"
 )
 
-type Server struct {
-	listenAddr string
-	Dust       butterfly.Storer[string, string]
+func main() {
+	//var timeout int
+	port := os.Getenv("PORT")
+	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
+	if err != nil {
+		timeout = 60
+		fmt.Println("Can`t parse timeout! Used standard: 60 sec.")
+	}
+	bodyLimit, err := strconv.Atoi(os.Getenv("BODYLIMIT"))
+	if err != nil {
+		bodyLimit = 1024*1024*1024*1024
+		fmt.Println("Can`t parse BodyLimit! Used standard: 1024*1024*1024*1024.")
+	}
+	s := NewServer(":"+port, bodyLimit, time.Duration(timeout))
+	log.Fatal(s.Start())
 }
 
-func NewServer(listenAddr string) *Server {
-	return &Server{
-		listenAddr: listenAddr,
-		Dust:       butterfly.NewDustStore[string, string](),
-	}
+func (s *Server) Start() error {
+	f := fiber.New(
+		fiber.Config{
+			BodyLimit:   s.bodyLimit,
+			IdleTimeout: s.idleTimeout,
+		},
+	)
+
+	f.Get("/put", s.Put)
+	f.Get("/get", s.Get)
+	f.Get("/update", s.Update)
+	f.Get("/delete", s.Delete)
+
+	return f.Listen(s.listenAddr)
 }
 
 func (s *Server) Put(c *fiber.Ctx) error {
@@ -90,21 +114,4 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 	} else {
 		return c.JSON(map[string]string{"status": "ok", "value": value})
 	}
-}
-
-func (s *Server) Start() error {
-	f := fiber.New()
-
-	f.Get("/put", s.Put)
-	f.Get("/get", s.Get)
-	f.Get("/update", s.Update)
-	f.Get("/delete", s.Delete)
-
-	return f.Listen(s.listenAddr)
-}
-
-func main() {
-	port := os.Getenv("PORT")
-	s := NewServer(":" + port)
-	log.Fatal(s.Start())
 }
