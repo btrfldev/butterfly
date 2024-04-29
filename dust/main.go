@@ -2,64 +2,68 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/TinajXD/butterfly"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Server struct {
 	listenAddr string
-	Dust butterfly.Storer[string, string]
+	Dust       butterfly.Storer[string, string]
 }
 
 func NewServer(listenAddr string) *Server {
 	return &Server{
 		listenAddr: listenAddr,
-		Dust: butterfly.NewDustStore[string, string](),
+		Dust:       butterfly.NewDustStore[string, string](),
 	}
 }
 
-func (s *Server) Put(c *fiber.Ctx) error{
+func (s *Server) Put(c *fiber.Ctx) error {
 	key := c.Params("key")
 	value := c.Params("value")
 
-	if err := s.Dust.Put(key, value); err!=nil{
+	if err := s.Dust.Put(key, value); err != nil {
 		return err
 	} else {
-		return c.JSON(map[string]string{"status":"ok"})
+		return c.JSON(map[string]string{"status": "ok"})
 	}
 }
 
-func (s *Server) Get(c *fiber.Ctx) error{
-	key := c.Params("key")
+func (s *Server) Get(c *fiber.Ctx) (err error) {
+	query := new(GetQuery)
+	if err = c.BodyParser(query); err != nil {
+		c.Status(http.StatusInternalServerError).Send([]byte("Can`t parse JSON!"))
+	}
+	//key := c.Params("key")
 
-	if value, err := s.Dust.Get(key); err!=nil{
+	if query.Value, err = s.Dust.Get(query.Key); err != nil {
 		return err
 	} else {
-		return c.JSON(map[string]string{"value":value})
+		return c.JSON(map[string]string{"value": query.Value})
 	}
 }
 
-func (s *Server) Update(c *fiber.Ctx) error{
+func (s *Server) Update(c *fiber.Ctx) error {
 	key := c.Params("key")
 	value := c.Params("value")
 
-	if err := s.Dust.Update(key, value); err!=nil{
+	if err := s.Dust.Update(key, value); err != nil {
 		return err
 	} else {
-		return c.JSON(map[string]string{"status":"ok"})
+		return c.JSON(map[string]string{"status": "ok"})
 	}
 }
 
-
-func (s *Server) Delete(c *fiber.Ctx) error{
+func (s *Server) Delete(c *fiber.Ctx) error {
 	key := c.Params("key")
 
-	if value, err := s.Dust.Delete(key); err!=nil{
+	if value, err := s.Dust.Delete(key); err != nil {
 		return err
 	} else {
-		return c.JSON(map[string]string{"status":"ok", "value":value})
+		return c.JSON(map[string]string{"status": "ok", "value": value})
 	}
 }
 
