@@ -23,13 +23,16 @@ func NewServer(listenAddr string) *Server {
 
 func (s *Server) Put(c *fiber.Ctx) error {
 	query := Query{}
-	/*key := c.Params("key")
-	value := c.Params("value")*/
+
 	if err := c.BodyParser(&query); err != nil {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
 	}
 
-	if err := s.Dust.Put(query.Key, query.Value); err != nil {
+	if query.Lib == "" || query.Key == "" {
+		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
+	}
+
+	if err := s.Dust.Put(query.Lib+":"+query.Key, query.Value); err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"status": "ok"})
@@ -42,7 +45,11 @@ func (s *Server) Get(c *fiber.Ctx) (err error) {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
 	}
 
-	if query.Value, err = s.Dust.Get(query.Key); err != nil {
+	if query.Lib == "" || query.Key == "" {
+		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
+	}
+
+	if query.Value, err = s.Dust.Get(query.Lib + ":" + query.Key); err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"value": query.Value})
@@ -51,13 +58,16 @@ func (s *Server) Get(c *fiber.Ctx) (err error) {
 
 func (s *Server) Update(c *fiber.Ctx) (err error) {
 	query := Query{}
-	/*key := c.Params("key")
-	value := c.Params("value")*/
+
 	if err = c.BodyParser(&query); err != nil {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
 	}
 
-	if err := s.Dust.Update(query.Key, query.Value); err != nil {
+	if query.Lib == "" || query.Key == "" {
+		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
+	}
+
+	if err := s.Dust.Update(query.Lib+":"+query.Key, query.Value); err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"status": "ok"})
@@ -65,14 +75,17 @@ func (s *Server) Update(c *fiber.Ctx) (err error) {
 }
 
 func (s *Server) Delete(c *fiber.Ctx) (err error) {
-	//key := c.Params("key")
-	query:=Query{}
+	query := Query{}
 
 	if err = c.BodyParser(&query); err != nil {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
 	}
 
-	if value, err := s.Dust.Delete(query.Key); err != nil {
+	if query.Lib == "" || query.Key == "" {
+		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
+	}
+
+	if value, err := s.Dust.Delete(query.Lib + ":" + query.Key); err != nil {
 		return err
 	} else {
 		return c.JSON(map[string]string{"status": "ok", "value": value})
