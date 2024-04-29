@@ -1,6 +1,6 @@
 package main
 
-type GetQuery struct {
+type Query struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }

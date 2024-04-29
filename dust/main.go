@@ -22,45 +22,57 @@ func NewServer(listenAddr string) *Server {
 }
 
 func (s *Server) Put(c *fiber.Ctx) error {
-	key := c.Params("key")
-	value := c.Params("value")
+	query := Query{}
+	/*key := c.Params("key")
+	value := c.Params("value")*/
+	if err := c.BodyParser(&query); err != nil {
+		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
+	}
 
-	if err := s.Dust.Put(key, value); err != nil {
-		return err
+	if err := s.Dust.Put(query.Key, query.Value); err != nil {
+		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"status": "ok"})
 	}
 }
 
 func (s *Server) Get(c *fiber.Ctx) (err error) {
-	query := new(GetQuery)
-	if err = c.BodyParser(query); err != nil {
-		c.Status(http.StatusInternalServerError).Send([]byte("Can`t parse JSON!"))
+	query := Query{}
+	if err = c.BodyParser(&query); err != nil {
+		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
 	}
-	//key := c.Params("key")
 
 	if query.Value, err = s.Dust.Get(query.Key); err != nil {
-		return err
+		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"value": query.Value})
 	}
 }
 
-func (s *Server) Update(c *fiber.Ctx) error {
-	key := c.Params("key")
-	value := c.Params("value")
+func (s *Server) Update(c *fiber.Ctx) (err error) {
+	query := Query{}
+	/*key := c.Params("key")
+	value := c.Params("value")*/
+	if err = c.BodyParser(&query); err != nil {
+		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
+	}
 
-	if err := s.Dust.Update(key, value); err != nil {
-		return err
+	if err := s.Dust.Update(query.Key, query.Value); err != nil {
+		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"status": "ok"})
 	}
 }
 
-func (s *Server) Delete(c *fiber.Ctx) error {
-	key := c.Params("key")
+func (s *Server) Delete(c *fiber.Ctx) (err error) {
+	//key := c.Params("key")
+	query:=Query{}
 
-	if value, err := s.Dust.Delete(key); err != nil {
+	if err = c.BodyParser(&query); err != nil {
+		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
+	}
+
+	if value, err := s.Dust.Delete(query.Key); err != nil {
 		return err
 	} else {
 		return c.JSON(map[string]string{"status": "ok", "value": value})
@@ -70,10 +82,10 @@ func (s *Server) Delete(c *fiber.Ctx) error {
 func (s *Server) Start() error {
 	f := fiber.New()
 
-	f.Get("/put/:key/:value", s.Put)
-	f.Get("/get/:key", s.Get)
-	f.Get("/update/:key/:value", s.Update)
-	f.Get("/delete/:key", s.Delete)
+	f.Get("/put", s.Put)
+	f.Get("/get", s.Get)
+	f.Get("/update", s.Update)
+	f.Get("/delete", s.Delete)
 
 	return f.Listen(s.listenAddr)
 }
