@@ -4,26 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 )
 
-type dustGetRequest struct {
+type dustUpdateRequest struct {
 	Lib string `json:"lib"`
 	Key string `json:"key"`
 }
-type dustGetResponce struct {
-	Value string `json:"value"`
-}
 
-func (c *Client) Get() (has bool, err error) {
-	reqData := dustGetRequest{Lib: c.Data.Lib, Key: c.Data.Key}
-	respData := dustGetResponce{}
+
+func (c *Client )Update() (has bool, err error) {
+	reqData := dustUpdateRequest{
+		Lib: c.Data.Lib,
+		Key: c.Data.Key,
+	}
+
 	b, err := json.Marshal(&reqData)
 	if err != nil {
 		return false, err
 	}
-	req, err := http.NewRequest("GET", c.Address+"/get", bytes.NewBuffer(b))
+	req, err := http.NewRequest("GET", c.Address+"/update", bytes.NewBuffer(b))
 	if err != nil {
 		return false, err
 	}
@@ -40,16 +40,7 @@ func (c *Client) Get() (has bool, err error) {
 	}else if res.StatusCode!=http.StatusOK {
 		return false, errors.New("unexpected error")
 	} else if res.StatusCode == http.StatusOK {
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return true, err
-		}
-		err = json.Unmarshal(body, &respData)
-		if err != nil {
-			return true, err
-		}
-
-		c.Data.Value = respData.Value
+		return true, nil
 	}
 
 	return true, nil
