@@ -1,8 +1,8 @@
 package butterfly
 
 import (
-	"sync"
 	"fmt"
+	"sync"
 )
 
 //Memory Key:Value Storage
@@ -11,7 +11,7 @@ type DustStore[K comparable, V any] struct {
 	dust map[K]V
 }
 
-//Return AirStroe(Memory Key:Value Storage)
+//Return DustStroe(Memory Key:Value Storage)
 func NewDustStore[K comparable, V any]() *DustStore[K, V] {
 	return &DustStore[K, V]{
 		dust: make(map[K]V),
@@ -25,6 +25,17 @@ func (a *DustStore[K, V]) Put(key K, value V) error {
 
 	a.dust[key] = value
 	return nil
+}
+
+func (a *DustStore[K, V]) List() (keys []K, err error) {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	for key := range a.dust {
+		keys = append(keys, key)
+	}
+
+	return keys, nil
 }
 
 func (a *DustStore[K, V]) Get(key K) (value V, err error) {

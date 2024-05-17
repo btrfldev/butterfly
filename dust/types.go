@@ -12,6 +12,11 @@ type Query struct {
 	Value string `json:"value"`
 }
 
+type ListResp struct {
+	Count uint64 `json:"count"`
+	Keys []string `json:"libs:keys"`
+}
+
 type Health struct {
 	Status           string `json:"status"`
 	UTC              string `json:"utc"`

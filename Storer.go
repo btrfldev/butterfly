@@ -5,4 +5,5 @@ type Storer[K comparable, V any] interface {
 	Get(K) (V, error)
 	Update(K, V) error
 	Delete(K) (V, error)
+	List() ([]K, error)
 }

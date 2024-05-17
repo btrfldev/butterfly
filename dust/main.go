@@ -6,15 +6,14 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
-	//"github.com/TinajXD/butterfly"
 	"github.com/TinajXD/butterfly/system"
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	//var timeout int
 	port := os.Getenv("PORT")
 	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
 	if err != nil {
@@ -43,6 +42,7 @@ func (s *Server) Start() error {
 	f.Get("/get", s.Get)
 	f.Get("/update", s.Update)
 	f.Get("/delete", s.Delete)
+	f.Get("/list", s.List)
 
 	return f.Listen(s.listenAddr)
 }
@@ -56,6 +56,10 @@ func (s *Server) Put(c *fiber.Ctx) error {
 
 	if query.Lib == "" || query.Key == "" {
 		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
+	}
+	
+	if strings.Contains(query.Lib, ":") || strings.Contains(query.Key, ":") {
+		return c.Status(http.StatusBadRequest).Send([]byte("You can`t use ':' in Lib or Key"))
 	}
 
 	if err := s.Dust.Put(query.Lib+":"+query.Key, query.Value); err != nil {
@@ -112,12 +116,35 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 	}
 
 	if value, err := s.Dust.Delete(query.Lib + ":" + query.Key); err != nil {
-		return err
+		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		return c.JSON(map[string]string{"status": "ok", "value": value})
 	}
 }
 
+func (s *Server) List(c *fiber.Ctx) (err error) {
+	query := Query{}
+	resp := ListResp{
+		Count: 0,
+		Keys:  []string{},
+	}
+
+	if err = c.BodyParser(&query); err != nil {
+		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
+	}
+
+	if keys, err := s.Dust.List(); err!=nil{
+		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
+	} else {
+		for _, key := range keys {
+			if strings.HasPrefix(key, query.Lib+":"+query.Key) {
+				resp.Count += 1
+				resp.Keys = append(resp.Keys, key)
+			}
+		}
+		return c.JSON(resp)
+	}
+}
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {
 	memory := system.ReadMemoryStats()
