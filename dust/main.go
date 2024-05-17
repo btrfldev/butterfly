@@ -9,6 +9,7 @@ import (
 	"time"
 
 	//"github.com/TinajXD/butterfly"
+	"github.com/TinajXD/butterfly/system"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -37,6 +38,7 @@ func (s *Server) Start() error {
 		},
 	)
 
+	f.Get("/health", s.Health)
 	f.Get("/put", s.Put)
 	f.Get("/get", s.Get)
 	f.Get("/update", s.Update)
@@ -114,4 +116,18 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 	} else {
 		return c.JSON(map[string]string{"status": "ok", "value": value})
 	}
+}
+
+
+func (s *Server) Health(c *fiber.Ctx) (err error) {
+	memory := system.ReadMemoryStats()
+
+	resp := Health{
+		Status:       "ok",
+		UTC:          time.Now().UTC().String(),
+		StorerType:   "Dust",
+		TotalStorage:  memory.MemTotal,
+		AvailableStorage: memory.MemAvailable,
+	}
+	return c.JSON(resp)
 }

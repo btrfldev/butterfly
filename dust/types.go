@@ -12,6 +12,14 @@ type Query struct {
 	Value string `json:"value"`
 }
 
+type Health struct {
+	Status           string `json:"status"`
+	UTC              string `json:"utc"`
+	StorerType       string `json:"type"`
+	TotalStorage     int    `json:"totalStorage"`
+	AvailableStorage int    `json:"availableStorage"`
+}
+
 type Server struct {
 	listenAddr  string
 	idleTimeout time.Duration
@@ -21,9 +29,9 @@ type Server struct {
 
 func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Server {
 	return &Server{
-		listenAddr: listenAddr,
+		listenAddr:  listenAddr,
 		idleTimeout: idleTimeout,
-		bodyLimit: bodyLimit,
-		Dust:       butterfly.NewDustStore[string, string](),
+		bodyLimit:   bodyLimit,
+		Dust:        butterfly.NewDustStore[string, string](),
 	}
 }
