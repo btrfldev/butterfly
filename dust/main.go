@@ -184,6 +184,7 @@ func (s *Server) Health(c *fiber.Ctx) (err error) {
 		Status:           "ok",
 		UTC:              time.Now().UTC().String(),
 		StorerType:       "Dust",
+		Version:          "0.2.3",
 		TotalStorage:     memory.MemTotal,
 		AvailableStorage: memory.MemAvailable,
 	}
