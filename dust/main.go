@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TinajXD/butterfly"
 	"github.com/TinajXD/butterfly/system"
 	"github.com/gofiber/fiber/v2"
 )
@@ -48,7 +49,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Put(c *fiber.Ctx) error {
-	query := Query{}
+	query := butterfly.Query{}
 
 	//parse query
 	if err := c.BodyParser(&query); err != nil {
@@ -76,7 +77,7 @@ func (s *Server) Put(c *fiber.Ctx) error {
 }
 
 func (s *Server) Get(c *fiber.Ctx) (err error) {
-	query := Query{}
+	query := butterfly.Query{}
 
 	//parse query
 	if err = c.BodyParser(&query); err != nil {
@@ -100,7 +101,7 @@ func (s *Server) Get(c *fiber.Ctx) (err error) {
 }
 
 func (s *Server) Update(c *fiber.Ctx) (err error) {
-	query := Query{}
+	query := butterfly.Query{}
 
 	//parse query
 	if err = c.BodyParser(&query); err != nil {
@@ -124,7 +125,7 @@ func (s *Server) Update(c *fiber.Ctx) (err error) {
 }
 
 func (s *Server) Delete(c *fiber.Ctx) (err error) {
-	query := Query{}
+	query := butterfly.Query{}
 
 	//parse query
 	if err = c.BodyParser(&query); err != nil {
@@ -148,9 +149,9 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 }
 
 func (s *Server) List(c *fiber.Ctx) (err error) {
-	query := Query{}
-	resp := ListResp{
-		Lists: []List{},
+	query := butterfly.Query{}
+	resp := butterfly.ListResp{
+		Lists: []butterfly.List{},
 	}
 
 	//parce query
@@ -164,7 +165,7 @@ func (s *Server) List(c *fiber.Ctx) (err error) {
 	} else {
 		//sort by prefix
 		for i, obj := range query.Objects {
-			resp.Lists = append(resp.Lists, List{Prefix: obj.Lib + ":" + obj.Key})
+			resp.Lists = append(resp.Lists, butterfly.List{Prefix: obj.Lib + ":" + obj.Key})
 			for _, key := range keys {
 				if strings.HasPrefix(key, obj.Lib+":"+obj.Key) {
 					resp.Lists[i].Count += 1
@@ -180,7 +181,7 @@ func (s *Server) List(c *fiber.Ctx) (err error) {
 func (s *Server) Health(c *fiber.Ctx) (err error) {
 	memory := system.ReadMemoryStats()
 
-	resp := Health{
+	resp := butterfly.Health{
 		Status:           "ok",
 		UTC:              time.Now().UTC().String(),
 		StorerType:       "Dust",

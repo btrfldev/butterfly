@@ -1,12 +1,6 @@
-package main
+package butterfly
 
-import (
-	"time"
-
-	"github.com/TinajXD/butterfly"
-)
-
-/*type Query struct {
+type Query struct {
 	Objects []Object `json:"objects"`
 }
 
@@ -33,22 +27,4 @@ type Health struct {
 	Version          string `json:"version"`
 	TotalStorage     int    `json:"totalStorage"`
 	AvailableStorage int    `json:"availableStorage"`
-}*/
-
-type Server struct {
-	listenAddr  string
-	idleTimeout time.Duration
-	bodyLimit   int
-	Dust        butterfly.Storer[string, string]
-	Info        butterfly.Storer[string, string]
-}
-
-func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Server {
-	return &Server{
-		listenAddr:  listenAddr,
-		idleTimeout: idleTimeout,
-		bodyLimit:   bodyLimit,
-		Dust:        butterfly.NewDustStore[string, string](),
-		Info:        butterfly.NewDustStore[string, string](),
-	}
 }
