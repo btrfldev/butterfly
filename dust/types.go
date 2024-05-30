@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/TinajXD/butterfly"
+	"github.com/iamsoloma/butterfly"
 )
 
 /*type Query struct {

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TinajXD/butterfly"
-	"github.com/TinajXD/butterfly/system"
+	"github.com/iamsoloma/butterfly"
+	"github.com/iamsoloma/butterfly/system"
 	"github.com/gofiber/fiber/v2"
 )
 
