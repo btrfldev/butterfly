@@ -1,4 +1,4 @@
-package butterfly
+package btrfl
 
 import (
 	"bufio"
@@ -9,17 +9,6 @@ import (
 	"strings"
 )
 
-//			  1   2  3  4  5   6
-//1 string = key;key;-;key;-;key;
-//               3          5
-//2 string = numoftrash:numoftrash
-//3 string = user:password;-:-;user:password;
-//[6; infinitive] = value
-// 					value
-//					  -
-//					value
-//					  -
-//					value
 
 func GetKeySpace(fullpath string) (KeySpace []string, err error) {
 	file, err := os.OpenFile(fullpath, os.O_RDONLY, 0600)
