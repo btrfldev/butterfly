@@ -8,7 +8,9 @@ import (
 	"os"
 )
 
-func LineCounter(r io.Reader) (int, error) {
+type FI struct{}
+
+func (FI)LineCounter(r io.Reader) (int, error) {
 	sterr := "btrfl.fileinteraction.LineCounter"
 	buf := make([]byte, 1*1024) //1 Kbyte
 	count := 0
@@ -28,7 +30,7 @@ func LineCounter(r io.Reader) (int, error) {
 	}
 }
 
-func GetLineByNum(r io.Reader, lineNum int) (line []byte, lastLine int, err error) {
+func (FI)GetLineByNum(r io.Reader, lineNum int) (line []byte, lastLine int, err error) {
 	sterr := "btrfl.fileinteraction.GetLineByNum"
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
@@ -47,8 +49,8 @@ func GetLineByNum(r io.Reader, lineNum int) (line []byte, lastLine int, err erro
 	}
 }
 
-func WriteFile(w *os.File, data string) (err error) {
-	sterr := "btrfl.fileinteraction.WriteFile"
+func (FI)WriteFile(w *os.File, data string) (err error) {
+	sterr := "btrfl.fileinteraction.WriteFullFile"
 	if _, err := w.WriteString(data); err != nil {
 		return errors.New(sterr + ": " + err.Error())
 	} else {
@@ -56,9 +58,9 @@ func WriteFile(w *os.File, data string) (err error) {
 	}
 }
 
-func AppendToFile(a *os.File, data string) (err error) {
+func (FI)AppendToFile(aw *os.File, data string) (err error) {
 	sterr := "btrfl.fileinteraction.AppendToFile"
-	if _, err := a.WriteString("\n" + data); err != nil {
+	if _, err := aw.WriteString("\n" + data); err != nil {
 		return errors.New(sterr + ": " + err.Error())
 	} else {
 		return nil

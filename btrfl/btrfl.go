@@ -7,8 +7,8 @@ import (
 )
 
 func GetKeySpace(Rfile *os.File) (KeySpace []string, err error) {
-	sterr := "btrfl.meta.GetKeySpace"
-	kspbytes, _, err := GetLineByNum(Rfile, 0)
+	sterr := "btrfl.GetKeySpace"
+	kspbytes, _, err := FI{}.GetLineByNum(Rfile, 0)
 	if err != nil {
 		return nil, errors.New(sterr + " " + err.Error())
 	}
@@ -19,27 +19,27 @@ func GetKeySpace(Rfile *os.File) (KeySpace []string, err error) {
 }
 
 func WriteKeySpace(Wfile *os.File, KeySpace []string) (err error) {
-	sterr := "btrfl.meta.WriteKeySpace"
+	sterr := "btrfl.WriteKeySpace"
 	kspstr := strings.Join(KeySpace, ";")
 
-	if err = WriteFile(Wfile, kspstr); err != nil {
+	if err = FI.WriteFile(FI{}, Wfile, kspstr); err != nil {
 		return errors.New(sterr + ": " + err.Error())
 	} else {
 		return nil
 	}
 }
 
-func AppendValues(Afile *os.File, Rfile *os.File, values []string) (lastAppended int, err error) {
-	sterr := "btrfl.meta.WriteKeySpace"
+func AppendValues(AWfile *os.File, Rfile *os.File, values []string) (lastAppended int, err error) {
+	sterr := "btrfl.AppendValues"
 	curLine := 0
 
-	if curLine, err = LineCounter(Rfile); err != nil {
+	if curLine, err = FI.LineCounter(FI{}, Rfile); err != nil {
 		return 0, errors.New(sterr + ": " + err.Error())
 	}
 	lastAppended += curLine
 
 	for _, str := range values {
-		if err := AppendToFile(Afile, str); err != nil {
+		if err := FI.AppendToFile(FI{}, AWfile, str); err != nil {
 			return lastAppended, errors.New(sterr + ": " + err.Error())
 		}
 		lastAppended++
