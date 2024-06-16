@@ -11,8 +11,8 @@ type Server struct {
 	listenAddr  string
 	idleTimeout time.Duration
 	bodyLimit   int
-	Dust        butterfly.Storer[string, string]
-	Info        butterfly.Storer[string, string]
+	Carbine        butterfly.Storer[string, string]
+	Meta        butterfly.Storer[string, string]
 }
 
 func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Server {
@@ -20,7 +20,7 @@ func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Ser
 		listenAddr:  listenAddr,
 		idleTimeout: idleTimeout,
 		bodyLimit:   bodyLimit,
-		Dust:        butterfly.NewDustStore[string, string](),
-		Info:        butterfly.NewDustStore[string, string](),
+		Carbine:        butterfly.NewCarbineStore[string, string](),
+		Meta:        butterfly.NewCarbineStore[string, string](),
 	}
 }

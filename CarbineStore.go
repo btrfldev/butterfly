@@ -11,8 +11,8 @@ type CarbineStore[K comparable, V any] struct {
 	carbine map[K]V
 }
 
-//Return DustStroe(Memory Key:Value Storage)
-func NewDustStore[K comparable, V any]() *CarbineStore[K, V] {
+//Return CarbineStore(Memory Key:Value Storage)
+func NewCarbineStore[K comparable, V any]() *CarbineStore[K, V] {
 	return &CarbineStore[K, V]{
 		carbine: make(map[K]V),
 	}

@@ -16,7 +16,7 @@ func main() {
 	port := os.Getenv("PORT")
 	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
 	if err != nil {
-		timeout = 60
+		timeout = int(time.Duration.Seconds(60))
 		fmt.Println("Can`t parse timeout! Used standard: 60 sec.")
 	}
 	bodyLimit, err := strconv.Atoi(os.Getenv("BODYLIMIT"))
@@ -41,6 +41,7 @@ func (s *Server) Start() error {
 	f.Get("/get", s.Get)
 	f.Get("/update", s.Update)
 	f.Get("/delete", s.Delete)
+	f.Get("/host/:lib/:key", s.Host)
 	f.Get("/list", s.List)
 
 	return f.Listen(s.listenAddr)
