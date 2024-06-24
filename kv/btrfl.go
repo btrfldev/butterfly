@@ -1,4 +1,4 @@
-package btrfl
+package kv
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 )
 
 func GetKeySpace(Rfile *os.File) (KeySpace []string, err error) {
-	sterr := "btrfl.GetKeySpace"
+	sterr := "kv.GetKeySpace"
 	kspbytes, _, err := FI{}.GetLineByNum(Rfile, 0)
 	if err != nil {
 		return nil, errors.New(sterr + " " + err.Error())
@@ -19,7 +19,7 @@ func GetKeySpace(Rfile *os.File) (KeySpace []string, err error) {
 }
 
 func WriteKeySpace(Wfile *os.File, KeySpace []string) (err error) {
-	sterr := "btrfl.WriteKeySpace"
+	sterr := "kv.WriteKeySpace"
 	kspstr := strings.Join(KeySpace, ";")
 
 	if err = FI.WriteFile(FI{}, Wfile, kspstr); err != nil {
@@ -30,7 +30,7 @@ func WriteKeySpace(Wfile *os.File, KeySpace []string) (err error) {
 }
 
 func AppendValues(AWfile *os.File, Rfile *os.File, values []string) (lastAppended int, err error) {
-	sterr := "btrfl.AppendValues"
+	sterr := "kv.AppendValues"
 	curLine := 0
 
 	if curLine, err = FI.LineCounter(FI{}, Rfile); err != nil {

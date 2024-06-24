@@ -1,4 +1,4 @@
-package btrfl
+package kv
 
 import (
 	"bufio"
