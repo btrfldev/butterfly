@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-
-	"github.com/iamsoloma/butterfly"
 	"github.com/gofiber/fiber/v2"
+	"github.com/iamsoloma/butterfly"
 )
 
 func (s *Server) Put(c *fiber.Ctx) error {
@@ -114,11 +113,13 @@ func (s *Server) Host(c *fiber.Ctx) (err error) {
 	lib, key := c.Params("lib"), c.Params("key")
 	value := ""
 
+	//check object
 	if lib == "" || key == "" {
 		return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty!"))
 	}
 
-	if value, err = s.Carbine.Get(lib + ":" + key);err!=nil{
+	//get object
+	if value, err = s.Carbine.Get(lib + ":" + key); err != nil {
 		return c.Status(http.StatusNotFound).Send([]byte(err.Error()))
 	}
 
