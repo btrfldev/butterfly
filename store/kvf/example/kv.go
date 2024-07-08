@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/iamsoloma/butterfly/kv"
+	"github.com/iamsoloma/butterfly/store/kvf"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 	defer Wfile.Close()
 
 
-	kv.WriteKeySpace(Wfile, Keys)
+	kvf.WriteKeySpace(Wfile, Keys)
 	check(err)
 
 	AWfile, err := os.OpenFile("bloom.kv", os.O_APPEND|os.O_WRONLY, 0666)
@@ -38,7 +38,7 @@ func main() {
 	check(err)
 	defer Rfile.Close()
 
-	last, err := kv.AppendValues(AWfile, Rfile, Values)
+	last, err := kvf.AppendValues(AWfile, Rfile, Values)
 	check(err)
 	fmt.Println("Last Appended value: " + strconv.Itoa(last))
 }

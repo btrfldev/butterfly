@@ -3,7 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/iamsoloma/butterfly"
+	//"github.com/iamsoloma/butterfly"
+	btrflstore "github.com/iamsoloma/butterfly/store"
 )
 
 type Server struct {
@@ -11,8 +12,8 @@ type Server struct {
 	idleTimeout   time.Duration
 	bodyLimit     int
 	cacheLifeTime time.Duration
-	Carbine       butterfly.Storer[string, string]
-	CacheStorage  butterfly.Storer[string, string]
+	Carbine       btrflstore.Storer[string, string] /*butterfly.Storer[string, string]*/
+	CacheStorage  btrflstore.Storer[string, string]
 }
 
 func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration, cacheLifeTime time.Duration) *Server {
@@ -21,7 +22,7 @@ func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration, cach
 		idleTimeout:   idleTimeout,
 		bodyLimit:     bodyLimit,
 		cacheLifeTime: cacheLifeTime,
-		Carbine:       butterfly.NewCarbineStore[string, string](),
-		CacheStorage:  butterfly.NewCarbineStore[string, string](),
+		Carbine:       btrflstore.NewCarbineStore[string, string](),
+		CacheStorage:  btrflstore.NewCarbineStore[string, string](),
 	}
 }
