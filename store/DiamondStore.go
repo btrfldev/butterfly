@@ -1,7 +1,6 @@
 package butterfly
 
-//FileSystem store based on .btrflArch
+//FileSystem store based on .btrfl Archives
 type Diamond struct {
 
 }
-

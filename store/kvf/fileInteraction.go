@@ -64,7 +64,7 @@ func (FI)GetLinesByNums(r io.Reader, linesNums []int) (lines map[int][]byte, las
 		lastLine++
 	}
 	if lastLine < biggestnum {
-		return nil, lastLine, io.EOF
+		return nil, lastLine, errors.New(sterr + ": " + io.EOF.Error())
 	} else {
 		return result, lastLine, nil
 	}
