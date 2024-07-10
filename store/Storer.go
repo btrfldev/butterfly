@@ -1,4 +1,4 @@
-package butterfly
+package store
 
 type Storer[K comparable, V any] interface {
 	Put(K, V) error

@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	//"github.com/iamsoloma/butterfly"
 	btrflstore "github.com/iamsoloma/butterfly/store"
 )
 
@@ -12,7 +11,7 @@ type Server struct {
 	idleTimeout   time.Duration
 	bodyLimit     int
 	cacheLifeTime time.Duration
-	Carbine       btrflstore.Storer[string, string] /*butterfly.Storer[string, string]*/
+	Carbine       btrflstore.Storer[string, string]
 	CacheStorage  btrflstore.Storer[string, string]
 }
 

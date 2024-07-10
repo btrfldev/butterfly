@@ -1,4 +1,4 @@
-package butterfly
+package store
 
 import (
 	"fmt"
