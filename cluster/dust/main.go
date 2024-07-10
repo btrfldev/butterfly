@@ -62,7 +62,6 @@ func (s *Server) Start() error {
 	//cacheapi
 	f.Get("/cacheurl/+", s.CacheURL)
 	f.Get("/+", s.CacheURL)
-	
 
 	return f.Listen(s.listenAddr)
 }
@@ -73,7 +72,7 @@ func (s *Server) Health(c *fiber.Ctx) (err error) {
 	resp := butterfly.Health{
 		Status:           "ok",
 		UTC:              time.Now().UTC().String(),
-		StorerType:       "Dust",
+		NodeType:         "dust",
 		Version:          "0.2.3",
 		TotalStorage:     memory.MemTotal,
 		AvailableStorage: memory.MemAvailable,

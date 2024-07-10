@@ -23,7 +23,7 @@ type List struct {
 type Health struct {
 	Status           string `json:"status"`
 	UTC              string `json:"utc"`
-	StorerType       string `json:"type"`
+	NodeType         string `json:"type"`
 	Version          string `json:"version"`
 	TotalStorage     int    `json:"totalStorage"`
 	AvailableStorage int    `json:"availableStorage"`
