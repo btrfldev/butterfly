@@ -1,0 +1,1 @@
+Wind - node that redirects the user to the node closest to it is responsible for authentication/registration. Monitors the status of the cluster, can start data rebalancing.

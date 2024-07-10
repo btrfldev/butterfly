@@ -8,7 +8,7 @@ RUN go mod download
 
 #Build
 COPY . .
-RUN go build -o ./bin/dust ./dust/*.go
+RUN go build -o ./bin/dust ./cluster/dust/*.go
 
 #WorkSpace
 FROM alpine:3.19.1 as runner
