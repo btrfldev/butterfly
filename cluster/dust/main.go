@@ -14,6 +14,10 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
+	if port == "" {
+		port = "1106"
+		fmt.Println("Can`t parse port! Used standard: 1106.")
+	}
 
 	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
 	if err != nil {
@@ -45,6 +49,7 @@ func (s *Server) Start() error {
 		fiber.Config{
 			BodyLimit:   s.bodyLimit,
 			IdleTimeout: s.idleTimeout,
+			Prefork:     true,
 		},
 	)
 
