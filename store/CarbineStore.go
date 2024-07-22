@@ -5,21 +5,20 @@ import (
 	"sync"
 )
 
-//Memory Key:Value Storage
-type CarbineStore[K comparable, V any] struct {
-	mu   sync.RWMutex
+// Memory Key:Value Storage
+type CarbineStore[K, C comparable, V any, S func(K, C) bool] struct {
+	mu      sync.RWMutex
 	carbine map[K]V
 }
 
-//Return CarbineStore(Memory Key:Value Storage)
-func NewCarbineStore[K comparable, V any]() *CarbineStore[K, V] {
-	return &CarbineStore[K, V]{
+// Return CarbineStore(Memory Key:Value Storage)
+func NewCarbineStore[K, C comparable, V any, S func(K, C) bool]() *CarbineStore[K, C, V, S] {
+	return &CarbineStore[K, C, V, S]{
 		carbine: make(map[K]V),
 	}
 }
 
-
-func (c *CarbineStore[K, V]) Put(key K, value V) error {
+func (c *CarbineStore[K, C, V, S]) Put(key K, value V) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -27,29 +26,32 @@ func (c *CarbineStore[K, V]) Put(key K, value V) error {
 	return nil
 }
 
-func (c *CarbineStore[K, V]) List() (keys []K, err error) {
+func (c *CarbineStore[K, C, V, S]) List(search S, comp C) (keys []K, err error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	for key := range c.carbine {
-		keys = append(keys, key)
+		if search(key, comp) {
+			keys = append(keys, key)
+		}
+
 	}
 
 	return keys, nil
 }
 
-func (c *CarbineStore[K, V]) Get(key K) (value V, err error) {
+func (c *CarbineStore[K, C, V, S]) Get(key K) (value V, err error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	value, ok := c.carbine[key]
-	if !ok{
+	if !ok {
 		return value, fmt.Errorf("the key (%v) does not exists", key)
 	}
 	return value, nil
 }
 
-func (c *CarbineStore[K, V]) Update(key K, value V) error {
+func (c *CarbineStore[K, C, V, S]) Update(key K, value V) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -62,7 +64,7 @@ func (c *CarbineStore[K, V]) Update(key K, value V) error {
 	return nil
 }
 
-func (c *CarbineStore[K, V]) Delete(key K) (value V, err error) {
+func (c *CarbineStore[K, C, V, S]) Delete(key K) (value V, err error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

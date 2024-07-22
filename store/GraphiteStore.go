@@ -151,8 +151,9 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 }
 
 // TODO Realise
-func (g *GraphiteStore[K, V]) List(key K, value V) (keys []K, err error) {
+func (g *GraphiteStore[K, V]) List(prefix string) (keys []K, err error) {
 	//get path and filename
+	
 	//check existing of folders and file
 	//GetKeySpace
 

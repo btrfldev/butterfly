@@ -16,7 +16,7 @@ type ListResp struct {
 
 type List struct {
 	Prefix string   `json:"prefix"`
-	Count  uint64   `json:"count"`
+	Count  int   `json:"count"`
 	Keys   []string `json:"libs:keys"`
 }
 

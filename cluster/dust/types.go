@@ -6,18 +6,19 @@ import (
 	btrflstore "github.com/iamsoloma/butterfly/store"
 )
 
+
 type Server struct {
-	listenAddr    string
-	idleTimeout   time.Duration
-	bodyLimit     int
-	Carbine       btrflstore.Storer[string, string]
+	listenAddr  string
+	idleTimeout time.Duration
+	bodyLimit   int
+	Carbine     btrflstore.Storer[string, string, string, func(string, string) bool]
 }
 
 func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Server {
 	return &Server{
-		listenAddr:    listenAddr,
-		idleTimeout:   idleTimeout,
-		bodyLimit:     bodyLimit,
-		Carbine:       btrflstore.NewCarbineStore[string, string](),
+		listenAddr:  listenAddr,
+		idleTimeout: idleTimeout,
+		bodyLimit:   bodyLimit,
+		Carbine:     btrflstore.NewCarbineStore[string, string, string](),
 	}
 }

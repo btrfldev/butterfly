@@ -138,7 +138,7 @@ func (s *Server) List(c *fiber.Ctx) (err error) {
 	}
 
 	//get lists
-	if keys, err := s.Carbine.List(); err != nil {
+	/*if keys, err := s.Carbine.List(); err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
 	} else {
 		//sort by prefix
@@ -153,5 +153,23 @@ func (s *Server) List(c *fiber.Ctx) (err error) {
 		}
 
 		return c.JSON(resp)
+	}*/
+
+	for i, obj := range query.Objects {
+		resp.Lists = append(resp.Lists, butterfly.List{Prefix: obj.Lib + ":" + obj.Key})
+		resp.Lists[i].Keys, err = s.Carbine.List(
+			func(key, comp string) bool {
+				if strings.HasPrefix(key, comp) {
+					return true
+				} else {
+					return false
+				}
+			}, obj.Lib+":"+obj.Key)
+		if err != nil {
+			c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
+		}
+		resp.Lists[i].Count = len(resp.Lists[i].Keys)
 	}
+
+	return c.JSON(resp)
 }
