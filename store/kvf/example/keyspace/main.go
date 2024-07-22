@@ -10,9 +10,11 @@ import (
 func main() {
 	KeySpace := []string{"Key", "Space", "Test", "File", ".", "It`s", "work", "!"}
 
-	file, err := os.Create("bloom.kv")
-	check(err)
-	file.Close()
+	if _, err := os.Stat("bloom.kv"); os.IsNotExist(err) {
+		file, err := os.Create("bloom.kv")
+		check(err)
+		file.Close()
+	}
 
 	WRfile, err := os.OpenFile("bloom.kv", os.O_RDWR, 0666)
 	check(err)

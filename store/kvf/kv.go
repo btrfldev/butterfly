@@ -23,7 +23,7 @@ func WriteKeySpace(Wfile *os.File, KeySpace []string) (err error) {
 	sterr := "btrfl.store.kvf.kv.WriteKeySpace"
 	kspstr := strings.Join(KeySpace, ";")
 
-	if err = FI.WriteFile(FI{}, Wfile, kspstr); err != nil {
+	if err = FI.WriteFirstLine(FI{}, Wfile, kspstr); err != nil {
 		return errors.New(sterr + ": " + err.Error())
 	} else {
 		return nil
@@ -48,8 +48,9 @@ func AppendValues(AWfile *os.File, Rfile *os.File, values []string) (lastAppende
 	return lastAppended, nil
 }
 
+
 func ReadValues(Rfile *os.File, R2file *os.File, KeySpace []string) (kv map[string]string, err error) {
-	sterr := "btrfl.store.kvf.kv.ReadFilePart"
+	sterr := "btrfl.store.kvf.kv.ReadValues"
 	var ksp []string           //available keyspace
 	ki := make(map[string]int) //key:id
 	tkv := make(map[string]string)

@@ -31,16 +31,8 @@ func main() {
 		fmt.Println("Can`t parse BodyLimit! Used standard: 1024*1024*1024*1024.")
 	}
 
-	var cacheLifeTime time.Duration
-	cacheLifeTimeInp, err := strconv.Atoi(os.Getenv("cacheLifeTime"))
-	if err != nil {
-		cacheLifeTime = 1 * time.Hour
-		fmt.Println("Can`t parse cacheLifeTime! Used standard: 1(hour).")
-	} else {
-		cacheLifeTime = time.Duration(cacheLifeTimeInp) * time.Hour
-	}
 
-	s := NewServer(":"+port, bodyLimit, time.Duration(timeout), cacheLifeTime)
+	s := NewServer(":"+port, bodyLimit, time.Duration(timeout))
 	log.Fatal(s.Start())
 }
 
@@ -63,10 +55,6 @@ func (s *Server) Start() error {
 	f.Get("/delete", s.Delete)
 	f.Get("/list", s.List)
 	f.Get("/host/:lib/:key", s.Host)
-
-	//cacheapi
-	f.Get("/cacheurl/+", s.CacheURL)
-	f.Get("/+", s.CacheURL)
 
 	return f.Listen(s.listenAddr)
 }

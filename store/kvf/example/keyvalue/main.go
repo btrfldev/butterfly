@@ -16,14 +16,14 @@ func main() {
 	example["Cat"] = "Dog"
 	example["Chelyabinsk"] = "Chelyabinsk is the administrative center and largest city Chelyabinsk Oblast, Russia. It is the seventh-largest city in Russia, with a population of over 1.1 million people, and the second-largest city in the Ural Federal District, after Yekaterinburg. Chelyabinsk is located to the East behind the South part of the Ural Mountains and runs along the Miass River."
 
-	CreateKV("bloom.kv", example)
-	result := ReadKV("bloom.kv", []string{"Ping", "Hi!", "Chelyabinsk"})
+	WriteKV("bloom.kv", example)
+	result := ReadV("bloom.kv", []string{"Ping", "Hi!", "Chelyabinsk"})
 	for k, v := range result {
 		fmt.Printf("%s:%s\n", k, v)
 	}
 }
 
-func CreateKV(filename string, kv map[string]string) {
+func WriteKV(filename string, kv map[string]string) {
 	Keys, Values := []string{}, []string{}
 
 	for k, v := range kv {
@@ -54,7 +54,7 @@ func CreateKV(filename string, kv map[string]string) {
 	//fmt.Println("Last Appended value: " + strconv.Itoa(last))
 }
 
-func ReadKV(filename string, keys []string) (result map[string]string) {
+func ReadV(filename string, keys []string) (result map[string]string) {
 	Rfile, err := os.OpenFile("bloom.kv", os.O_RDONLY, 0666)
 	check(err)
 	defer Rfile.Close()

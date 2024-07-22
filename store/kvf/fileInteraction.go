@@ -70,8 +70,8 @@ func (FI)GetLinesByNums(r io.Reader, linesNums []int) (lines map[int][]byte, las
 	}
 }
 
-func (FI)WriteFile(w *os.File, data string) (err error) {
-	sterr := "btrfl.store.fileinteraction.WriteFullFile"
+func (FI)WriteFirstLine(w *os.File, data string) (err error) {
+	sterr := "btrfl.store.fileinteraction.WriteFirstLine"
 	if _, err := w.WriteString(data); err != nil {
 		return errors.New(sterr + ": " + err.Error())
 	} else {
