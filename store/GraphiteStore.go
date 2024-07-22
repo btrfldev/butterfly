@@ -18,7 +18,7 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 	return nil
 }
 
-// TODO Reamade this, need prefix.
+
 // TODO Realise
 func (g *GraphiteStore[K, V]) List(key K, value V) (keys []K, err error) {
 	//get path and filename
