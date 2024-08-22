@@ -108,7 +108,7 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 			return fmt.Errorf("can`t read the current keyspace in (%s) for (%v)", paths[0], key)
 		}
 		kv, err := kvf.ReadValues(R2File, R3File, ks)
-		if err!=nil{
+		if err != nil {
 			return fmt.Errorf("can`t read the current values in (%s) for rewriting file with (%v)", paths[0], key)
 		}
 
@@ -139,7 +139,7 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 			return fmt.Errorf("can`t open the file for (%v) in (%s)", key, paths[0])
 		}
 		defer R4File.Close()
-	
+
 		_, err = kvf.AppendValues(AWFile, R4File, values)
 		if err != nil {
 			return fmt.Errorf("can`t update the values in (%s) for (%v)", paths[0], key)
@@ -153,7 +153,17 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 // TODO Realise
 func (g *GraphiteStore[K, V]) List(prefix string) (keys []K, err error) {
 	//get path and filename
-	
+	paths := strings.Split(prefix, "|")
+	pathtofile := g.path + "/" + paths[0]
+	if len(paths) != 2 {
+		_, err := os.Stat(pathtofile)
+		if err != nil {
+			if os.IsExist(err) {
+				if os.
+			}
+		}
+	}
+
 	//check existing of folders and file
 	//GetKeySpace
 

@@ -1,1 +1,1 @@
-Dust - node that can run Lua scripts and provides a fast single storage api for the cluster.
+Dust - node key-value storage.
