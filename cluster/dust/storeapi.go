@@ -30,7 +30,7 @@ func (s *Server) Put(c *fiber.Ctx) error {
 
 	//put all objects
 	for i, obj := range query.Objects {
-		if err := s.Carbine.Put(obj.Lib+":"+obj.Key, obj.Value); err != nil {
+		if err := s.Memory.Put(obj.Lib+":"+obj.Key, obj.Value); err != nil {
 			return c.Status(http.StatusInternalServerError).Send([]byte(err.Error() + " Object " + fmt.Sprint(i+1)))
 		}
 	}
@@ -54,7 +54,7 @@ func (s *Server) Get(c *fiber.Ctx) (err error) {
 
 	//get all objects
 	for i, obj := range query.Objects {
-		if query.Objects[i].Value, err = s.Carbine.Get(obj.Lib + ":" + obj.Key); err != nil {
+		if query.Objects[i].Value, err = s.Memory.Get(obj.Lib + ":" + obj.Key); err != nil {
 			return c.Status(http.StatusNotFound).Send([]byte(err.Error() + " Object " + fmt.Sprint(i+1)))
 		}
 	}
@@ -78,7 +78,7 @@ func (s *Server) Update(c *fiber.Ctx) (err error) {
 
 	//update all objects
 	for i, obj := range query.Objects {
-		if err := s.Carbine.Update(obj.Lib+":"+obj.Key, obj.Value); err != nil {
+		if err := s.Memory.Update(obj.Lib+":"+obj.Key, obj.Value); err != nil {
 			return c.Status(http.StatusNotFound).Send([]byte(err.Error() + " Object " + fmt.Sprint(i+1)))
 		}
 	}
@@ -102,7 +102,7 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 
 	//delete all objects
 	for i, obj := range query.Objects {
-		if query.Objects[i].Value, err = s.Carbine.Delete(obj.Lib + ":" + obj.Key); err != nil {
+		if query.Objects[i].Value, err = s.Memory.Delete(obj.Lib + ":" + obj.Key); err != nil {
 			return c.Status(http.StatusNotFound).Send([]byte(err.Error() + " Object " + fmt.Sprint(i+1)))
 		}
 	}
@@ -119,7 +119,7 @@ func (s *Server) Host(c *fiber.Ctx) (err error) {
 	}
 
 	//get object
-	if value, err = s.Carbine.Get(lib + ":" + key); err != nil {
+	if value, err = s.Memory.Get(lib + ":" + key); err != nil {
 		return c.Status(http.StatusNotFound).Send([]byte(err.Error()))
 	}
 
@@ -157,7 +157,7 @@ func (s *Server) List(c *fiber.Ctx) (err error) {
 
 	for i, obj := range query.Objects {
 		resp.Lists = append(resp.Lists, butterfly.List{Prefix: obj.Lib + ":" + obj.Key})
-		resp.Lists[i].Keys, err = s.Carbine.List(
+		resp.Lists[i].Keys, err = s.Memory.List(
 			func(key, comp string) bool {
 				if strings.HasPrefix(key, comp) {
 					return true

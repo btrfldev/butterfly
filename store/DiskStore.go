@@ -11,22 +11,24 @@ import (
 // FileSystem store based on .kv
 // use the | symbol to differentiate
 // filepath | key
-type GraphiteStore[K string, V string] struct {
+type DiskStore struct {
 	path string
 }
 
-func NewGraphiteStore[K string, V string](path string) *GraphiteStore[string, string] {
-	return &GraphiteStore[string, string]{}
+func NewDiskStore(path string) *DiskStore {
+	return &DiskStore{
+		path: path,
+	}
 }
 
-// TODO Realise
-func (g *GraphiteStore[K, V]) Put(key K, value V) error {
+// TODO Check
+func (d *DiskStore) Put(key string, value string) error {
 	//get filepath and key
-	paths := strings.Split(string(key), "|")
+	paths := strings.Split(key, "|")
 	if len(paths) != 2 {
 		return fmt.Errorf("the file and path boundaries are not known (%v), use only one '|' symbol for this", key)
 	}
-	pathtofile := g.path + "/" + paths[0]
+	pathtofile := d.path + "/" + paths[0]
 	_, err := os.Stat(pathtofile)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -151,10 +153,10 @@ func (g *GraphiteStore[K, V]) Put(key K, value V) error {
 }
 
 // TODO Realise
-func (g *GraphiteStore[K, V]) List(prefix string) (keys []K, err error) {
+/*func (d *DiskStore[K, V]) List(prefix string) (keys []K, err error) {
 	//get path and filename
 	paths := strings.Split(prefix, "|")
-	pathtofile := g.path + "/" + paths[0]
+	pathtofile := d.path + "/" + paths[0]
 	if len(paths) != 2 {
 		_, err := os.Stat(pathtofile)
 		if err != nil {
@@ -168,19 +170,79 @@ func (g *GraphiteStore[K, V]) List(prefix string) (keys []K, err error) {
 	//GetKeySpace
 
 	return nil, nil
-}
+}*/
 
-// TODO Realise
-func (g *GraphiteStore[K, V]) Get(key K) (value V, err error) {
+// TODO Check
+func (d *DiskStore) Get(key string) (value string, err error) {
 	//get path and filename
-	//check existing of folders and file
-	//Read kv
 
-	return value, nil
+	//get filepath and key
+	paths := strings.Split(key, "|")
+	if len(paths) != 2 {
+		return value, fmt.Errorf("the file and path boundaries are not known (%v), use only one '|' symbol for this", key)
+	}
+	pathtofile := d.path + "/" + paths[0]
+	_, err = os.Stat(pathtofile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return value, fmt.Errorf("can`t open the file for (%v)", key)
+		}
+	}
+
+	//key is existing?
+	found := false
+	RFile, err := os.OpenFile(pathtofile, os.O_RDONLY, 0777)
+	if err != nil {
+		return value, fmt.Errorf("can`t open the file for (%v) in (%s)", key, paths[0])
+	}
+	defer RFile.Close()
+
+	ks, err := kvf.GetKeySpace(RFile)
+	if err != nil {
+		return value, fmt.Errorf("can`t get key space")
+	}
+	for _, k := range ks {
+		if k == paths[1] {
+			found = true
+		}
+	}
+
+	//read
+	if !found {
+		return value, fmt.Errorf("can`t find the (%v) in (%s)", key, paths[0])
+	} else {
+
+		//read
+		RFile, err := os.OpenFile(pathtofile, os.O_RDONLY, 0777)
+		if err != nil {
+			return value, fmt.Errorf("can`t open the file for (%v) in (%s)", key, paths[0])
+		}
+		defer RFile.Close()
+		R2File, err := os.OpenFile(pathtofile, os.O_RDONLY, 0777)
+		if err != nil {
+			return value, fmt.Errorf("can`t open the file for (%v) in (%s)", key, paths[0])
+		}
+		defer R2File.Close()
+		kv, err := kvf.ReadValues(RFile, R2File, []string{string(key)})
+		if err != nil {
+			return value, fmt.Errorf("can`t read the current values in (%s) for rewriting file with (%v)", paths[0], key)
+		}
+
+		_/*keys*/, values := []string{}, []string{}
+
+		for /*k*/_, v := range kv {
+			//keys = append(keys, k)
+			values = append(values, v)
+		}
+		value = values[0]
+
+		return value, nil
+
+	}
 }
 
 // TODO Realise
-func (c *GraphiteStore[K, V]) Update(key K, value V) error {
+func (c *DiskStore) Update(key string, value string) error {
 	//get path and filename
 	//check existing of folders and file
 	//rewrite file or append record to the way and task of the rewriting
@@ -189,7 +251,7 @@ func (c *GraphiteStore[K, V]) Update(key K, value V) error {
 }
 
 // TODO Realise
-func (c *GraphiteStore[K, V]) Delete(key K) (value V, err error) {
+func (d *DiskStore) Delete(key string) (value string, err error) {
 	//get path and filename
 	//check existing of folders and file
 	//rewrite the file

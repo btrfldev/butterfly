@@ -41,7 +41,8 @@ func (s *Server) Start() error {
 		fiber.Config{
 			BodyLimit:   s.bodyLimit,
 			IdleTimeout: s.idleTimeout,
-			Prefork:     true,
+			Prefork:     false,
+			StreamRequestBody: true,
 		},
 	)
 
