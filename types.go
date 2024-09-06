@@ -16,15 +16,15 @@ type ListResp struct {
 
 type List struct {
 	Prefix string   `json:"prefix"`
-	Count  int   `json:"count"`
+	Count  int      `json:"count"`
 	Keys   []string `json:"libs:keys"`
 }
 
 type Health struct {
-	Status           string `json:"status"`
-	UTC              string `json:"utc"`
-	NodeType         string `json:"type"`
-	Version          string `json:"version"`
-	TotalStorage     int    `json:"totalStorage"`
-	AvailableStorage int    `json:"availableStorage"`
+	Status          string `json:"status"`
+	UTC             string `json:"utc"`
+	NodeType        string `json:"type"`
+	Version         string `json:"version"`
+	TotalMemory     int    `json:"totalMemory"`
+	AvailableMemory int    `json:"availableMemory"`
 }

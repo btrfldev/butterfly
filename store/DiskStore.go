@@ -245,7 +245,7 @@ func (d *DiskStore) Get(key string) (value string, err error) {
 func (c *DiskStore) Update(key string, value string) error {
 	//get path and filename
 	//check existing of folders and file
-	//rewrite file or append record to the way and task of the rewriting
+	//rewrite file
 
 	return nil
 }

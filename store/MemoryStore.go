@@ -11,11 +11,11 @@ type MemoryStore struct {
 	memory map[string]string
 }
 
-// Return CarbineStore(Memory Key:Value Storage)
+
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		memory: make(map[string]string),
-		mu: sync.RWMutex{},
+		//mu:     sync.RWMutex{},
 	}
 }
 

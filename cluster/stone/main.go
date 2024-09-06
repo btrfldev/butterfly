@@ -15,7 +15,7 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "1106"
+		port = "9060"
 		fmt.Println("Can`t parse port! Used standard: 1106.")
 	}
 
@@ -31,7 +31,7 @@ func main() {
 		fmt.Println("Can`t parse BodyLimit! Used standard: 1024*1024*1024*1024.")
 	}
 
-	s := NewServer(":"+port, bodyLimit, time.Duration(timeout))
+	s := NewServer(":" + port, bodyLimit, time.Duration(timeout))
 	log.Fatal(s.Start())
 }
 
@@ -48,14 +48,6 @@ func (s *Server) Start() error {
 	//main
 	f.Get("/health", s.Health)
 
-	//storeapi
-	f.Get("/put", s.Put)
-	f.Get("/get", s.Get)
-	f.Get("/update", s.Update)
-	f.Get("/delete", s.Delete)
-	f.Get("/list", s.List)
-	f.Get("/host/:lib/:key", s.Host)
-
 	return f.Listen(s.listenAddr)
 }
 
@@ -65,7 +57,7 @@ func (s *Server) Health(c *fiber.Ctx) (err error) {
 	resp := butterfly.Health{
 		Status:           "ok",
 		UTC:              time.Now().UTC().String(),
-		NodeType:         "dust",
+		NodeType:         "stone",
 		Version:          "0.1.0",
 		TotalMemory:     memory.MemTotal,
 		AvailableMemory: memory.MemAvailable,
