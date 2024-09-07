@@ -22,11 +22,11 @@ func (s *Server) Upload(c *fiber.Ctx) error {
 	key = strings.ReplaceAll(key, "/", "^")
 	key += "^" + file.Filename
 
-	err = c.SaveFile(file, "./tmp/uploads/"+lib+"$"+key)
+	err = c.SaveFile(file, s.StoragePath+lib+"$"+key)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save file!"))
 	}
-	println("./tmp/uploads/" + lib + "$" + key)
+	println(s.StoragePath + lib + "$" + key)
 
 	return c.JSON(butterfly.Object{
 		Lib:   lib,

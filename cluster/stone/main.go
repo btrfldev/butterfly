@@ -17,22 +17,28 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "9060"
-		fmt.Println("Can`t parse port! Used standard: 1106.")
+		fmt.Println("Can`t parse PORT! Used standard: 1106.")
 	}
 
 	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
 	if err != nil {
 		timeout = int(time.Duration.Seconds(60))
-		fmt.Println("Can`t parse timeout! Used standard: 60 sec.")
+		fmt.Println("Can`t parse TIMEOUT! Used standard: 60 sec.")
 	}
 
 	bodyLimit, err := strconv.Atoi(os.Getenv("BODYLIMIT"))
 	if err != nil {
 		bodyLimit = 1024 * 1024 * 1024 * 1024
-		fmt.Println("Can`t parse BodyLimit! Used standard: 1024*1024*1024*1024.")
+		fmt.Println("Can`t parse BODYLIMIT! Used standard: 1024*1024*1024*1024.")
 	}
 
-	s := NewServer(":" + port, bodyLimit, time.Duration(timeout))
+	StoragePath := os.Getenv("STORAGE_PATH")
+	if StoragePath == "" {
+		StoragePath = "./storage/"
+		fmt.Println("Can`t parse STORAGE_PATH! Used standard: ./storage .")
+	}
+
+	s := NewServer(":" + port, bodyLimit, time.Duration(timeout), StoragePath)
 	log.Fatal(s.Start())
 }
 
