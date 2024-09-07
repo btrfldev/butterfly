@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html/v2"
 	"github.com/iamsoloma/butterfly"
 	"github.com/iamsoloma/butterfly/system"
 )
@@ -36,17 +37,25 @@ func main() {
 }
 
 func (s *Server) Start() error {
+	viewEngine := html.New("cluster/stone/templates", ".html")
 	f := fiber.New(
 		fiber.Config{
 			BodyLimit:         s.bodyLimit,
 			IdleTimeout:       s.idleTimeout,
 			Prefork:           false,
 			StreamRequestBody: true,
+			Views: viewEngine,
 		},
 	)
 
 	//main
 	f.Get("/health", s.Health)
+
+	storeapi:=f.Group("/store")
+	storeapi.Post("/upload/fromHTML/:inpname/:lib/*", s.Upload)
+
+	ui:=f.Group("/ui")
+	ui.Get("/upload", s.UploadUI)
 
 	return f.Listen(s.listenAddr)
 }
