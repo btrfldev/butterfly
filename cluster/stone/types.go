@@ -9,17 +9,19 @@ import (
 type Server struct {
 	listenAddr  string
 	idleTimeout time.Duration
-	bodyLimit   int
+	//bodyLimit   int
 	Memory      btrflstore.MemoryStore
 	StoragePath     string
+	DustAddress string
 }
 
-func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration, StoragePath string) *Server {
+func NewServer(listenAddr string, /*bodyLimit int,*/ idleTimeout time.Duration, StoragePath, DustAddress string) *Server {
 	return &Server{
 		listenAddr:  listenAddr,
 		idleTimeout: idleTimeout,
-		bodyLimit:   bodyLimit,
+		//bodyLimit:   bodyLimit,
 		Memory:      *btrflstore.NewMemoryStore(),
 		StoragePath: StoragePath,
+		DustAddress: DustAddress,
 	}
 }
