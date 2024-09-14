@@ -33,14 +33,14 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a dir! Dir isn`t a dir."))
 	}
 
-	//println(s.StoragePath+lib+"/"+key)
+	println(s.StoragePath+lib+"/"+key)
 	err = c.SaveFile(file, s.StoragePath+lib+"/"+key)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save file!\n" + err.Error()))
 	}
 
 	cl := fiber.Client{}
-	agent := cl.Get(s.DustAddress)
+	agent := cl.Get(s.DustAddress+"/put")
 	agent.JSON(butterfly.Object{
 		Lib:   lib,
 		Key:   key,
@@ -59,7 +59,7 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 			Value: strconv.FormatInt(file.Size, 10),
 		})
 	} else {
-		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save meta data!"))
+		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save meta data!\n"))
 	}
 	
 

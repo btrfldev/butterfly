@@ -54,7 +54,7 @@ func (s *Server) Start() error {
 	f.Get("/update", s.Update)
 	f.Get("/delete", s.Delete)
 	f.Get("/list", s.List)
-	f.Get("/host/:lib/:key", s.Host)
+	f.Get("/host/:lib/*", s.Host)
 
 	return f.Listen(s.listenAddr)
 }

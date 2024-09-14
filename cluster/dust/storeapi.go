@@ -110,7 +110,7 @@ func (s *Server) Delete(c *fiber.Ctx) (err error) {
 }
 
 func (s *Server) Host(c *fiber.Ctx) (err error) {
-	lib, key := c.Params("lib"), c.Params("key")
+	lib, key := c.Params("lib"), c.Params("*")
 	value := ""
 
 	//check object
