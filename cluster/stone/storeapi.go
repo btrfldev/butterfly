@@ -94,7 +94,7 @@ func (s *Server) Get(c *fiber.Ctx) error {
 	if statusCode == 200 {
 		return c.SendFile(s.StoragePath + lib + "/" + key)
 	} else {
-		return c.Status(http.StatusNotFound).Send([]byte("Can`t found object`s meta!\n"+lib+":"+key+"\n"+string(body[:])))
+		return c.Status(http.StatusNotFound).Send([]byte("Can`t found object`s meta!\n" + lib + ":" + key + "\n" + string(body[:])))
 	}
 
 	//return c.SendFile(s.StoragePath + lib + "/" + key)

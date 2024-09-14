@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	//"strconv"
 	"time"
 
@@ -32,7 +33,7 @@ func main() {
 		fmt.Println("Can`t parse DUST_ADDR! Used standard: http://0.0.0.0:1106.")
 	}
 
-	s := NewServer(":" + port, time.Duration(int(time.Duration.Seconds(60))), StoragePath, DustAddress)
+	s := NewServer(":"+port, time.Duration(int(time.Duration.Seconds(60))), StoragePath, DustAddress)
 	log.Fatal(s.Start())
 }
 
@@ -43,19 +44,19 @@ func (s *Server) Start() error {
 			IdleTimeout:       s.idleTimeout,
 			Prefork:           false,
 			StreamRequestBody: true,
-			Views: viewEngine,
+			Views:             viewEngine,
 		},
 	)
 
 	//main
 	f.Get("/health", s.Health)
 
-	storeapi:=f.Group("/store")
+	storeapi := f.Group("/store")
 	storeapi.Post("/fromForm/:inpname/:lib/*", s.UploadFromForm)
-	
+
 	storeapi.Get("/:lib/*", s.Get)
 
-	ui:=f.Group("/ui")
+	ui := f.Group("/ui")
 	ui.Get("/upload", s.UploadUI)
 
 	return f.Listen(s.listenAddr)
@@ -63,14 +64,17 @@ func (s *Server) Start() error {
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {
 	memory := system.ReadMemoryStats()
+	disk := system.ReadDiskInfo(s.StoragePath)
 
 	resp := butterfly.Health{
-		Status:           "ok",
-		UTC:              time.Now().UTC().String(),
-		NodeType:         "stone",
-		Version:          "0.1.0",
-		TotalMemory:     memory.MemTotal,
+		Status:          "ok",
+		UTC:             time.Now().UTC().String(),
+		NodeType:        "stone",
+		Version:         "0.1.0",
+		FreeMemory:      memory.MemFree,
 		AvailableMemory: memory.MemAvailable,
+		FreeDisk:        disk.DiskAvailable,
+		AvailableDisk:   disk.DiskAvailable,
 	}
 	return c.JSON(resp)
 }

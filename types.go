@@ -25,6 +25,8 @@ type Health struct {
 	UTC             string `json:"utc"`
 	NodeType        string `json:"type"`
 	Version         string `json:"version"`
-	TotalMemory     int    `json:"totalMemory"`
-	AvailableMemory int    `json:"availableMemory"`
+	FreeMemory      uint64 `json:"freeMemory"`
+	AvailableMemory uint64 `json:"availableMemory"`
+	FreeDisk        uint64 `json:"freeDisk"`
+	AvailableDisk   uint64 `json:"availableDisk"`
 }

@@ -61,14 +61,17 @@ func (s *Server) Start() error {
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {
 	memory := system.ReadMemoryStats()
+	disk := system.ReadDiskInfo("./")
 
 	resp := butterfly.Health{
-		Status:           "ok",
-		UTC:              time.Now().UTC().String(),
-		NodeType:         "dust",
-		Version:          "0.1.0",
-		TotalMemory:     memory.MemTotal,
+		Status:          "ok",
+		UTC:             time.Now().UTC().String(),
+		NodeType:        "dust",
+		Version:         "0.1.0",
+		FreeMemory:      memory.MemFree,
 		AvailableMemory: memory.MemAvailable,
+		FreeDisk:        disk.DiskAvailable,
+		AvailableDisk:   disk.DiskAvailable,
 	}
 	return c.JSON(resp)
 }

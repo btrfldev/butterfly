@@ -5,6 +5,7 @@ go 1.22.4
 require (
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/template/html/v2 v2.1.2
+	golang.org/x/sys v0.25.0
 )
 
 require (
@@ -20,5 +21,4 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.55.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
 )
