@@ -23,14 +23,12 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 	key = strings.ReplaceAll(key, "/", "^")
 	key += "^" + file.Filename
 
-	dir, err := os.Stat(s.StoragePath + "/" + lib)
+	_, err = os.Stat(s.StoragePath + "/" + lib)
 	if os.IsNotExist(err) {
-		if err := os.MkdirAll(s.StoragePath+lib, 0777); err != nil {
+		println(s.StoragePath+lib+"/")
+		if err := os.MkdirAll(s.StoragePath+lib+"/", 0777); err != nil {
 			return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a lib`s dir!\n" + err.Error()))
 		}
-	}
-	if !dir.IsDir() {
-		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a dir! Dir isn`t a dir."))
 	}
 
 	println(s.StoragePath + lib + "/" + key)
@@ -43,9 +41,9 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 	agent := cl.Get(s.DustAddress + "/put")
 	agent.JSON(butterfly.Query{Objects: []butterfly.Object{
 		{
-			Lib:   lib,
+			Lib:   "stone_obj_" + lib,
 			Key:   key,
-			Value: "local",
+			Value: s.NodeInfo.ID,
 		},
 	}})
 	statusCode, _, errs := agent.Bytes()
@@ -59,7 +57,7 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 		return c.JSON(butterfly.Object{
 			Lib:   lib,
 			Key:   strings.ReplaceAll(key, "^", "/"),
-			Value: strconv.FormatInt(file.Size, 10),
+			Value: strconv.FormatInt(file.Size, 10) + " " + s.NodeInfo.ID,
 		})
 	} else {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save meta data!\n"))
@@ -80,7 +78,7 @@ func (s *Server) Get(c *fiber.Ctx) error {
 	agent := cl.Get(s.DustAddress + "/get")
 	agent.JSON(butterfly.Query{Objects: []butterfly.Object{
 		{
-			Lib:   lib,
+			Lib:   "stone_obj_" + lib,
 			Key:   strings.ReplaceAll(key, "%20", " "),
 			Value: "",
 		},
@@ -97,5 +95,4 @@ func (s *Server) Get(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).Send([]byte("Can`t found object`s meta!\n" + lib + ":" + key + "\n" + string(body[:])))
 	}
 
-	//return c.SendFile(s.StoragePath + lib + "/" + key)
 }

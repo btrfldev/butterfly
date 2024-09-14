@@ -11,11 +11,18 @@ type Server struct {
 	idleTimeout time.Duration
 	//bodyLimit   int
 	Memory      btrflstore.MemoryStore
-	StoragePath     string
+	StoragePath string
 	DustAddress string
+	NodeInfo    NodeInfo
 }
 
-func NewServer(listenAddr string, /*bodyLimit int,*/ idleTimeout time.Duration, StoragePath, DustAddress string) *Server {
+type NodeInfo struct {
+	ID     string
+	Region string
+	Role   string
+}
+
+func NewServer(listenAddr string /*bodyLimit int,*/, idleTimeout time.Duration, StoragePath, DustAddress string) *Server {
 	return &Server{
 		listenAddr:  listenAddr,
 		idleTimeout: idleTimeout,
@@ -23,5 +30,8 @@ func NewServer(listenAddr string, /*bodyLimit int,*/ idleTimeout time.Duration, 
 		Memory:      *btrflstore.NewMemoryStore(),
 		StoragePath: StoragePath,
 		DustAddress: DustAddress,
+		NodeInfo: NodeInfo{
+
+		},
 	}
 }

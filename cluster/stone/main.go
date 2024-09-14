@@ -33,6 +33,7 @@ func main() {
 	}
 
 	s := NewServer(":"+port, time.Duration(int(time.Duration.Seconds(60))), StoragePath, DustAddress)
+	s.InitNode(DustAddress)
 	log.Fatal(s.Start())
 }
 
