@@ -10,16 +10,16 @@ import (
 )
 
 type Memory struct {
-	MemTotal     uint64
-	MemFree      uint64
-	MemAvailable uint64
+	TotalMem     uint64
+	FreeMem      uint64
+	AvailableMem uint64
 }
 
 type Disk struct {
-	DiskTotal uint64
-	DiskFree  uint64
-	DiskAvailable uint64
-	DiskType  string
+	TotalDisk     uint64
+	FreeDisk      uint64
+	AvailableDisk uint64
+	DiskType      string
 }
 
 func ReadMemoryStats() Memory {
@@ -35,11 +35,11 @@ func ReadMemoryStats() Memory {
 		key, value := parseLine(scanner.Text())
 		switch key {
 		case "MemTotal":
-			res.MemTotal = value
+			res.TotalMem = value
 		case "MemFree":
-			res.MemFree = value
+			res.FreeMem = value
 		case "MemAvailable":
-			res.MemAvailable = value
+			res.AvailableMem = value
 		}
 	}
 	return res
@@ -51,9 +51,9 @@ func ReadDiskInfo(path string) Disk {
 	unix.Statfs(path, &info)
 
 	res := Disk{}
-	res.DiskAvailable = info.Bavail * uint64(info.Bsize)
-	res.DiskTotal = info.Blocks * uint64(info.Bsize)
-	res.DiskFree = info.Bfree * uint64(info.Bsize)
+	res.AvailableDisk = info.Bavail * uint64(info.Bsize)
+	res.TotalDisk = info.Blocks * uint64(info.Bsize)
+	res.FreeDisk = info.Bfree * uint64(info.Bsize)
 
 	return res
 }
@@ -61,10 +61,10 @@ func ReadDiskInfo(path string) Disk {
 func parseLine(raw string) (key string, value uint64) {
 	text := strings.ReplaceAll(raw[:len(raw)-2], " ", "")
 	keyValue := strings.Split(text, ":")
-    if keyValue[1] == "" {
-        return keyValue[0], 0
-    }
-    strconv.ParseUint(keyValue[1], 10, 64)
+	if keyValue[1] == "" {
+		return keyValue[0], 0
+	}
+	strconv.ParseUint(keyValue[1], 10, 64)
 
 	return keyValue[0], toUint(keyValue[1])
 }

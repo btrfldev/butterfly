@@ -11,7 +11,7 @@ func main() {
 	disk := system.ReadDiskInfo("./")
 
 	fmt.Println("In MegaBytes:")
-	fmt.Printf("MemTotal: %d | MemFree: %d | MemAvailable: %d\n", mem.MemTotal/1024, mem.MemFree/1024, mem.MemAvailable/1024)
+	fmt.Printf("MemTotal: %d | MemFree: %d | MemAvailable: %d\n", mem.TotalMem/1024, mem.FreeMem/1024, mem.AvailableMem/1024)
 	fmt.Println("In GigaBytes:")
-	fmt.Printf("DiskTotal: %d | DiskFree: %d | DiskAvailable: %d\n", disk.DiskTotal/1024/1024, disk.DiskFree/1024/1024, disk.DiskAvailable/1024/1024)
+	fmt.Printf("DiskTotal: %d | DiskFree: %d | DiskAvailable: %d\n", disk.TotalDisk/1024/1024, disk.FreeDisk/1024/1024, disk.AvailableDisk/1024/1024)
 }

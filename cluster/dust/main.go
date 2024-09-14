@@ -68,10 +68,10 @@ func (s *Server) Health(c *fiber.Ctx) (err error) {
 		UTC:             time.Now().UTC().String(),
 		NodeType:        "dust",
 		Version:         "0.1.0",
-		FreeMemory:      memory.MemFree,
-		AvailableMemory: memory.MemAvailable,
-		FreeDisk:        disk.DiskAvailable,
-		AvailableDisk:   disk.DiskAvailable,
+		FreeMemory:      memory.FreeMem,
+		AvailableMemory: memory.AvailableMem,
+		FreeDisk:        disk.AvailableDisk,
+		AvailableDisk:   disk.AvailableDisk,
 	}
 	return c.JSON(resp)
 }
