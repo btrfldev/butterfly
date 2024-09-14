@@ -25,7 +25,7 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 
 	dir, err := os.Stat(s.StoragePath + "/" + lib)
 	if os.IsNotExist(err) {
-		if err := os.MkdirAll(s.StoragePath+lib, 0666); err != nil {
+		if err := os.MkdirAll(s.StoragePath+lib, 0777); err != nil {
 			return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a lib`s dir!\n" + err.Error()))
 		}
 	}
@@ -33,26 +33,29 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a dir! Dir isn`t a dir."))
 	}
 
-	println(s.StoragePath+lib+"/"+key)
+	println(s.StoragePath + lib + "/" + key)
 	err = c.SaveFile(file, s.StoragePath+lib+"/"+key)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save file!\n" + err.Error()))
 	}
 
 	cl := fiber.Client{}
-	agent := cl.Get(s.DustAddress+"/put")
-	agent.JSON(butterfly.Object{
-		Lib:   lib,
-		Key:   key,
-		Value: "local",
-	})
+	agent := cl.Get(s.DustAddress + "/put")
+	agent.JSON(butterfly.Query{Objects: []butterfly.Object{
+		{
+			Lib:   lib,
+			Key:   key,
+			Value: "local",
+		},
+	}})
 	statusCode, _, errs := agent.Bytes()
 	if len(errs) > 0 {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"errs": errs,
 		})
 	}
-	if statusCode==200{
+	if statusCode == 200 {
+		//println(string(body[:]))
 		return c.JSON(butterfly.Object{
 			Lib:   lib,
 			Key:   strings.ReplaceAll(key, "^", "/"),
@@ -61,7 +64,6 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 	} else {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save meta data!\n"))
 	}
-	
 
 }
 
@@ -74,5 +76,26 @@ func (s *Server) Get(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse key or lib!"))
 	}
 
-	return c.SendFile(s.StoragePath + lib + "/" + key)
+	cl := fiber.Client{}
+	agent := cl.Get(s.DustAddress + "/get")
+	agent.JSON(butterfly.Query{Objects: []butterfly.Object{
+		{
+			Lib:   lib,
+			Key:   strings.ReplaceAll(key, "%20", " "),
+			Value: "",
+		},
+	}})
+	statusCode, body, errs := agent.Bytes()
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"errs": errs,
+		})
+	}
+	if statusCode == 200 {
+		return c.SendFile(s.StoragePath + lib + "/" + key)
+	} else {
+		return c.Status(http.StatusNotFound).Send([]byte("Can`t found object`s meta!\n"+lib+":"+key+"\n"+string(body[:])))
+	}
+
+	//return c.SendFile(s.StoragePath + lib + "/" + key)
 }
