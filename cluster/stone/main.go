@@ -20,20 +20,26 @@ func main() {
 		fmt.Println("Can`t parse PORT! Used standard: 9060.")
 	}
 
-	StoragePath := os.Getenv("STORAGE_PATH")
-	if StoragePath == "" {
-		StoragePath = "./storage/"
+	storagePath := os.Getenv("STORAGE_PATH")
+	if storagePath == "" {
+		storagePath = "./storage/"
 		fmt.Println("Can`t parse STORAGE_PATH! Used standard: ./storage/ .")
 	}
 
-	DustAddress := os.Getenv("DUST_ADDR")
-	if DustAddress == "" {
-		DustAddress = "http://0.0.0.0:1106"
+	publicAddress := os.Getenv("PUBLIC_ADDRESS")
+	if publicAddress == "" {
+		publicAddress = "http://0.0.0.0"
+		fmt.Println("Can`t parse PUBLIC_ADDRESS! Used standard: 0.0.0.0 .")
+	}
+
+	dustAddress := os.Getenv("DUST_ADDR")
+	if dustAddress == "" {
+		dustAddress = "http://0.0.0.0:1106"
 		fmt.Println("Can`t parse DUST_ADDR! Used standard: http://0.0.0.0:1106.")
 	}
 
-	s := NewServer(":"+port, time.Duration(int(time.Duration.Seconds(60))), StoragePath, DustAddress)
-	s.InitNode(DustAddress)
+	s := NewServer(port, time.Duration(int(time.Duration.Seconds(60))), storagePath, publicAddress, dustAddress)
+	s.InitNode()
 	log.Fatal(s.Start())
 }
 
@@ -59,7 +65,7 @@ func (s *Server) Start() error {
 	ui := f.Group("/ui")
 	ui.Get("/upload", s.UploadUI)
 
-	return f.Listen(s.listenAddr)
+	return f.Listen(":"+s.listenPort)
 }
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {

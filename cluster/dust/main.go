@@ -31,7 +31,7 @@ func main() {
 		fmt.Println("Can`t parse BodyLimit! Used standard: 1024*1024*1024*1024.")
 	}
 
-	s := NewServer(":"+port, bodyLimit, time.Duration(timeout))
+	s := NewServer(port, bodyLimit, time.Duration(timeout))
 	log.Fatal(s.Start())
 }
 
@@ -56,7 +56,7 @@ func (s *Server) Start() error {
 	f.Get("/list", s.List)
 	f.Get("/host/:lib/*", s.Host)
 
-	return f.Listen(s.listenAddr)
+	return f.Listen(":"+s.listenPort)
 }
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {

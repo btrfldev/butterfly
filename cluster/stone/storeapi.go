@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"strconv"
@@ -20,19 +21,20 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 
 	lib := c.Params("lib")
 	key := c.Params("*")
-	key = strings.ReplaceAll(key, "/", "^")
-	key += "^" + file.Filename
+	key += "/" + file.Filename
+	keyLocal := strings.ReplaceAll(key, "/", "^")
+
 
 	_, err = os.Stat(s.StoragePath + "/" + lib)
 	if os.IsNotExist(err) {
-		println(s.StoragePath+lib+"/")
+		println(s.StoragePath + lib + "/")
 		if err := os.MkdirAll(s.StoragePath+lib+"/", 0777); err != nil {
 			return c.Status(http.StatusInternalServerError).Send([]byte("Can`t create a lib`s dir!\n" + err.Error()))
 		}
 	}
 
 	println(s.StoragePath + lib + "/" + key)
-	err = c.SaveFile(file, s.StoragePath+lib+"/"+key)
+	err = c.SaveFile(file, s.StoragePath+lib+"/"+keyLocal)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save file!\n" + err.Error()))
 	}
@@ -43,7 +45,7 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 		{
 			Lib:   "stone_obj_" + lib,
 			Key:   key,
-			Value: s.NodeInfo.ID,
+			Value: strconv.Itoa(s.NodeInfo.ID),
 		},
 	}})
 	statusCode, _, errs := agent.Bytes()
@@ -56,8 +58,8 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 		//println(string(body[:]))
 		return c.JSON(butterfly.Object{
 			Lib:   lib,
-			Key:   strings.ReplaceAll(key, "^", "/"),
-			Value: strconv.FormatInt(file.Size, 10) + " " + s.NodeInfo.ID,
+			Key:   key,
+			Value: strconv.FormatInt(file.Size, 10) + " " + strconv.Itoa(s.NodeInfo.ID),
 		})
 	} else {
 		return c.Status(http.StatusInternalServerError).Send([]byte("Can`t save meta data!\n"))
@@ -68,7 +70,6 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 func (s *Server) Get(c *fiber.Ctx) error {
 	lib := c.Params("lib")
 	key := c.Params("*")
-	key = strings.ReplaceAll(key, "/", "^")
 
 	if lib == "" || key == "" {
 		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse key or lib!"))
@@ -76,6 +77,7 @@ func (s *Server) Get(c *fiber.Ctx) error {
 
 	cl := fiber.Client{}
 	agent := cl.Get(s.DustAddress + "/get")
+	println("stone_obj_" + lib + " | " + strings.ReplaceAll(key, "%20", " "))
 	agent.JSON(butterfly.Query{Objects: []butterfly.Object{
 		{
 			Lib:   "stone_obj_" + lib,
@@ -89,8 +91,20 @@ func (s *Server) Get(c *fiber.Ctx) error {
 			"errs": errs,
 		})
 	}
+	resp := butterfly.Query{}
 	if statusCode == 200 {
-		return c.SendFile(s.StoragePath + lib + "/" + key)
+		if err := json.Unmarshal(body, &resp); err != nil {
+			return c.Status(http.StatusInternalServerError).Send([]byte("Can`t unmarshal database`s responce."))
+		}
+
+		if resp.Objects[0].Value == strconv.Itoa(s.NodeInfo.ID) {
+			println(resp.Objects[0].Value + " | " + strconv.Itoa(s.NodeInfo.ID))
+			return c.SendFile(s.StoragePath + lib + "/" + strings.ReplaceAll(key, "/", "^"))
+		} else {
+			//TODO: Redirect by node id
+			return c.Redirect(resp.Objects[0].Value + "/store/" + lib + "/" + key, http.StatusContinue)
+		}
+
 	} else {
 		return c.Status(http.StatusNotFound).Send([]byte("Can`t found object`s meta!\n" + lib + ":" + key + "\n" + string(body[:])))
 	}

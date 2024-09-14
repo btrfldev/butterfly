@@ -7,7 +7,7 @@ import (
 )
 
 type Server struct {
-	listenAddr  string
+	listenPort  string
 	idleTimeout time.Duration
 	//bodyLimit   int
 	Memory      btrflstore.MemoryStore
@@ -17,21 +17,23 @@ type Server struct {
 }
 
 type NodeInfo struct {
-	ID     string
-	Region string
-	Role   string
+	ID            int
+	Region        string
+	Role          string
+	PublicAddress string
 }
 
-func NewServer(listenAddr string /*bodyLimit int,*/, idleTimeout time.Duration, StoragePath, DustAddress string) *Server {
+func NewServer(listenPort string /*bodyLimit int,*/, idleTimeout time.Duration, StoragePath, PublicAddress, DustAddress string) *Server {
+
 	return &Server{
-		listenAddr:  listenAddr,
+		listenPort:  listenPort,
 		idleTimeout: idleTimeout,
 		//bodyLimit:   bodyLimit,
 		Memory:      *btrflstore.NewMemoryStore(),
 		StoragePath: StoragePath,
 		DustAddress: DustAddress,
 		NodeInfo: NodeInfo{
-
+			PublicAddress: PublicAddress,
 		},
 	}
 }

@@ -7,15 +7,15 @@ import (
 )
 
 type Server struct {
-	listenAddr  string
+	listenPort  string
 	idleTimeout time.Duration
 	bodyLimit   int
 	Memory      btrflstore.MemoryStore
 }
 
-func NewServer(listenAddr string, bodyLimit int, idleTimeout time.Duration) *Server {
+func NewServer(listenPort string, bodyLimit int, idleTimeout time.Duration) *Server {
 	return &Server{
-		listenAddr:  listenAddr,
+		listenPort:  listenPort,
 		idleTimeout: idleTimeout,
 		bodyLimit:   bodyLimit,
 		Memory:      *btrflstore.NewMemoryStore(),
