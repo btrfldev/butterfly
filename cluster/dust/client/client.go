@@ -19,18 +19,26 @@ func (a *Agent) Put(objects []butterfly.Object) (err error) {
 	client := &http.Client{}
 	status := butterfly.Status{}
 
-	body, err := json.Marshal(objects)
-	logger.CheckErr(err, errLocation, "Can`t marshal json")
-	req, err := http.NewRequest(http.MethodGet, a.DustAddress, bytes.NewBuffer(body))
-	resp, err := client.Do(req)
-	logger.CheckErr(err, errLocation, "Can`t do request to dust")
 
+	query, err := json.Marshal(butterfly.Query{Objects: objects})
+	if lerr := logger.CheckErr(err, errLocation, "Can`t marshal json"); lerr != nil {
+		panic(lerr)
+	}
+
+
+	req, err := http.NewRequest(http.MethodGet, a.DustAddress+"/put", bytes.NewBuffer(query))
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if lerr := logger.CheckErr(err, errLocation, "Can`t do request to dust"); lerr != nil {
+		panic(lerr)
+	}
+
+	
 	defer resp.Body.Close()
-	respBody := []byte{}
-	_, err = resp.Body.Read(respBody)
-	logger.CheckErr(err, errLocation, "Can`t read dust`s responce")
-	err = json.Unmarshal(respBody, &status)
-	logger.CheckErr(err, errLocation, "Can`t unmarshal dust`s responce")
+	err = json.NewDecoder(resp.Body).Decode(&status)
+	if lerr := logger.CheckErr(err, errLocation, "Can`t unmarshal dust`s responce"); lerr != nil {
+		panic(lerr)
+	}
 
 	if status.Status == http.StatusOK {
 		return nil
