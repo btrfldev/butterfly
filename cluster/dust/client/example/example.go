@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/iamsoloma/butterfly"
 	"github.com/iamsoloma/butterfly/cluster/dust/client"
 )
@@ -25,5 +27,7 @@ func main() {
 
 	if err:=agent.Put(Objects);err!=nil{
 		panic(err)
+	} else {
+		fmt.Println("Objects` are putted!")
 	}
 }
