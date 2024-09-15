@@ -4,6 +4,11 @@ type Query struct {
 	Objects []Object `json:"objects"`
 }
 
+type Status struct {
+	Status int `json:"status"`
+	Message string `json:"message"`
+}
+
 type Object struct {
 	Lib   string `json:"lib"`
 	Key   string `json:"key"`

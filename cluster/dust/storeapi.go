@@ -14,27 +14,27 @@ func (s *Server) Put(c *fiber.Ctx) error {
 
 	//parse query
 	if err := c.BodyParser(&query); err != nil {
-		return c.Status(http.StatusBadRequest).Send([]byte("Can`t parse JSON!"))
+		return c.Status(http.StatusBadRequest).JSON(butterfly.Status{Status: http.StatusBadRequest, Message: "Can`t parse JSON!"})
 	}
 
 	//check all objects
 	for i, obj := range query.Objects {
 		if obj.Lib == "" || obj.Key == "" {
-			return c.Status(http.StatusBadRequest).Send([]byte("Lib or Key is empty! Object " + fmt.Sprint(i+1)))
+			return c.Status(http.StatusBadRequest).JSON(butterfly.Status{Status: http.StatusBadRequest, Message: "Lib or Key is empty! Object " + fmt.Sprint(i+1)})
 		}
 
 		if strings.Contains(obj.Lib, ":") || strings.Contains(obj.Key, ":") {
-			return c.Status(http.StatusBadRequest).Send([]byte("You can`t use ':' in Lib or Key! Object " + fmt.Sprint(i+1)))
+			return c.Status(http.StatusBadRequest).JSON(butterfly.Status{Status: http.StatusBadRequest, Message: "You can`t use ':' in Lib or Key! Object " + fmt.Sprint(i+1)})
 		}
 	}
 
 	//put all objects
 	for i, obj := range query.Objects {
 		if err := s.Memory.Put(obj.Lib+":"+obj.Key, obj.Value); err != nil {
-			return c.Status(http.StatusInternalServerError).Send([]byte(err.Error() + " Object " + fmt.Sprint(i+1)))
+			return c.Status(http.StatusInternalServerError).JSON(butterfly.Status{Status: http.StatusInternalServerError, Message: err.Error() + " Object " + fmt.Sprint(i+1)})
 		}
 	}
-	return c.JSON(map[string]string{"status": "ok"})
+	return c.JSON(butterfly.Status{Status: http.StatusOK, Message: "All objects` are putted."})
 }
 
 func (s *Server) Get(c *fiber.Ctx) (err error) {

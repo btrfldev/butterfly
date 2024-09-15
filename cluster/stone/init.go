@@ -16,8 +16,6 @@ func (s *Server) InitNode() {
 	s.initStorage()
 
 	s.registerNewNode()
-
-	println(s.NodeInfo.ID, s.NodeInfo.Region, s.NodeInfo.Role)
 }
 
 func (s *Server) initStorage() {
@@ -54,7 +52,6 @@ func (s *Server) registerNewNode() {
 		panic("Can`t get list of nodes.")
 	}
 
-	//resp.Lists[0].Count
 	NewID := 0
 	if resp.Lists[0].Count > 0 {
 		NewID = 0
@@ -75,7 +72,6 @@ func (s *Server) registerNewNode() {
 			}
 		} else {
 			for in := range IDs {
-				println(IDs[in])
 				if in == 0 {
 					if NewID < IDs[in] {
 						break
@@ -118,4 +114,6 @@ func (s *Server) registerNewNode() {
 	} else {
 		panic("Can`t get list of nodes.")
 	}
+
+	
 }
