@@ -1,1 +1,5 @@
-Dust - node key-value storage.
+Dust - Library:Object:Key:Value storage.
+
+Object has path(necessarily) and type(only for other programms).
+
+Library:JSON
