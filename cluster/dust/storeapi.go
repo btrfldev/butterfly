@@ -61,7 +61,7 @@ func (s *Server) Get(c *fiber.Ctx) (err error) {
 	return c.JSON(query)
 }
 
-func (s *Server) Update(c *fiber.Ctx) (err error) {
+/*func (s *Server) Update(c *fiber.Ctx) (err error) {
 	query := butterfly.Query{}
 
 	//parse query
@@ -83,7 +83,7 @@ func (s *Server) Update(c *fiber.Ctx) (err error) {
 		}
 	}
 	return c.JSON(map[string]string{"status": "ok"})
-}
+}*/
 
 func (s *Server) Delete(c *fiber.Ctx) (err error) {
 	query := butterfly.Query{}

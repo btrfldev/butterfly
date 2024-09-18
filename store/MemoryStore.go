@@ -52,7 +52,7 @@ func (m *MemoryStore) Get(key string) (value string, err error) {
 	return value, nil
 }
 
-func (m *MemoryStore) Update(key string, value string) error {
+/*func (m *MemoryStore) Update(key string, value string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -63,7 +63,7 @@ func (m *MemoryStore) Update(key string, value string) error {
 
 	m.memory[key] = value
 	return nil
-}
+}*/
 
 func (m *MemoryStore) Delete(key string) (value string, err error) {
 	m.mu.Lock()

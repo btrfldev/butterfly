@@ -51,7 +51,7 @@ func (s *Server) Start() error {
 	//storeapi
 	f.Get("/put", s.Put)
 	f.Get("/get", s.Get)
-	f.Get("/update", s.Update)
+	//f.Get("/update", s.Update)
 	f.Get("/delete", s.Delete)
 	f.Get("/list", s.List)
 	f.Get("/host/:lib/*", s.Host)
