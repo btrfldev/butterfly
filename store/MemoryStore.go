@@ -15,7 +15,7 @@ type MemoryStore struct {
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		memory: make(map[string]string),
-		//mu:     sync.RWMutex{},
+		mu:     sync.RWMutex{},
 	}
 }
 

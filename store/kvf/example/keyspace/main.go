@@ -8,22 +8,23 @@ import (
 )
 
 func main() {
+	path := "./examples/keyspace.kv"
 	KeySpace := []string{"Key", "Space", "Test", "File", ".", "It`s", "work", "!"}
 
-	if _, err := os.Stat("bloom.kv"); os.IsNotExist(err) {
-		file, err := os.Create("bloom.kv")
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		file, err := os.Create(path)
 		check(err)
 		file.Close()
 	}
 
-	WRfile, err := os.OpenFile("bloom.kv", os.O_RDWR, 0666)
+	WRfile, err := os.OpenFile(path, os.O_RDWR, 0666)
 	check(err)
 	defer WRfile.Close()
 	err = kvf.WriteKeySpace(WRfile, KeySpace)
 	check(err)
 
 
-	Rfile, err := os.OpenFile("bloom.kv", os.O_RDONLY, 0666)
+	Rfile, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	check(err)
 	defer Rfile.Close()
 	KeySpace, err = kvf.GetKeySpace(Rfile)

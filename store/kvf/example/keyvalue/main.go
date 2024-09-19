@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	path := "./examples/keyvalue.kv"
 
 	example := make(map[string]string)
 	example["Ping"] = "Pong"
@@ -16,8 +17,8 @@ func main() {
 	example["Cat"] = "Dog"
 	example["Chelyabinsk"] = "Chelyabinsk is the administrative center and largest city Chelyabinsk Oblast, Russia. It is the seventh-largest city in Russia, with a population of over 1.1 million people, and the second-largest city in the Ural Federal District, after Yekaterinburg. Chelyabinsk is located to the East behind the South part of the Ural Mountains and runs along the Miass River."
 
-	WriteKV("bloom.kv", example)
-	result := ReadV("bloom.kv", []string{"Ping", "Hi!", "Chelyabinsk"})
+	WriteKV(path, example)
+	result := ReadV(path, []string{"Ping", "Hi!", "Chelyabinsk"})
 	for k, v := range result {
 		fmt.Printf("%s:%s\n", k, v)
 	}
@@ -55,11 +56,11 @@ func WriteKV(filename string, kv map[string]string) {
 }
 
 func ReadV(filename string, keys []string) (result map[string]string) {
-	Rfile, err := os.OpenFile("bloom.kv", os.O_RDONLY, 0666)
+	Rfile, err := os.OpenFile(filename, os.O_RDONLY, 0666)
 	check(err)
 	defer Rfile.Close()
 
-	R2file, err := os.OpenFile("bloom.kv", os.O_RDONLY, 0666)
+	R2file, err := os.OpenFile(filename, os.O_RDONLY, 0666)
 	check(err)
 	defer R2file.Close()
 
