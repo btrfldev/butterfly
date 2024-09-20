@@ -49,6 +49,9 @@ func main() {
 			return false
 		}
 	}, "")
+	if err!=nil{
+		panic(err)
+	}
 
 	fmt.Println("List of current keys: ", list)
 }
