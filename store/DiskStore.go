@@ -51,9 +51,9 @@ func (d *DiskStore) Get(key string) (value string, err error) {
 
 	var valCopy []byte
 	err = d.kvs.View(func(txn *badger.Txn) error {
-		item, e := txn.Get([]byte(key))
-		if e != nil {
-			return logger.NewErr(errLocation, "Can`t make GET transaction")
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return err
 		}
 
 		valCopy, err = item.ValueCopy(nil)
@@ -65,7 +65,7 @@ func (d *DiskStore) Get(key string) (value string, err error) {
 	})
 
 	value = string(valCopy)
-	
+
 	if err != nil {
 		return value, logger.NewErr(errLocation, "Can`t make GET transaction")
 	} else {
@@ -73,4 +73,31 @@ func (d *DiskStore) Get(key string) (value string, err error) {
 	}
 }
 
-//func (d *DiskStore) Delete(key string) (value string, err)
+func (d *DiskStore) Delete(key string) (value string, err error) {
+	errLocation := "btrfl.store.DiskStore.Delete"
+
+	var valCopy []byte
+	err = d.kvs.Update(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return logger.NewErr(errLocation, "Can`t GET value before DELETE transaction")
+		}
+
+		valCopy, err = item.ValueCopy(nil)
+		if err != nil {
+			return logger.NewErr(errLocation, "Can`t copy value before DELETE transaction")
+		}
+
+		err = txn.Delete([]byte(key))
+		return err
+	})
+
+	value = string(valCopy)
+
+	if err != nil {
+		return value, logger.NewErr(errLocation, "Can`t make DELETE transaction")
+	} else {
+		return value, nil
+	}
+
+}

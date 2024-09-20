@@ -24,4 +24,10 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Ping" + ":" + value)
+
+	value, err = kv.Delete("Ping")
+	if err!=nil{
+		panic(err)
+	}
+	fmt.Println("Ping is deleted" + ":" + value)
 }
