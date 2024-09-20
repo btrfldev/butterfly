@@ -31,12 +31,17 @@ func (d *DiskStore) CloseDiskStore() {
 	d.kvs.Close()
 }
 
-func (d *DiskStore) Put(key, value string) error {
+func (d *DiskStore) Put(kv map[string]string) error {
 	errLocation := "btrfl.store.DiskStore.Put"
 
 	err := d.kvs.Update(func(txn *badger.Txn) error {
-		err := txn.Set([]byte(key), []byte(value))
-		return err
+		for k, v := range kv {
+			err := txn.Set([]byte(k), []byte(v))
+			if err != nil {
+				return logger.NewErr(errLocation, "Can`t set "+k)
+			}
+		}
+		return nil
 	})
 
 	if err != nil {
@@ -46,58 +51,99 @@ func (d *DiskStore) Put(key, value string) error {
 	return nil
 }
 
-func (d *DiskStore) Get(key string) (value string, err error) {
+func (d *DiskStore) Get(keys []string) (kv map[string]string, err error) {
 	errLocation := "btrfl.store.DiskStore.Get"
 
-	var valCopy []byte
+	kv = make(map[string]string)
 	err = d.kvs.View(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(key))
-		if err != nil {
-			return err
-		}
+		for _, k := range keys {
+			item, err := txn.Get([]byte(k))
+			if err == badger.ErrKeyNotFound {
+				return logger.NewErr(errLocation, "the key ("+k+") does not exists")
+			} else if err != nil {
+				return err
+			}
 
-		valCopy, err = item.ValueCopy(nil)
-		if err != nil {
-			return logger.NewErr(errLocation, "Can`t copy value from GET transaction")
+			var valCopy []byte
+			valCopy, err = item.ValueCopy(nil)
+
+			if err != nil {
+				return logger.NewErr(errLocation, "Can`t copy value from GET query for "+k)
+			}
+			kv[k] = string(valCopy)
 		}
 
 		return nil
 	})
 
-	value = string(valCopy)
-
 	if err != nil {
-		return value, logger.NewErr(errLocation, "Can`t make GET transaction")
+		return kv, logger.NewErr(errLocation, "Can`t make GET transaction")
 	} else {
-		return value, nil
+		return kv, nil
 	}
 }
 
-func (d *DiskStore) Delete(key string) (value string, err error) {
+
+func (d *DiskStore) List(search func(k string, c string) bool, comp string) (keys []string, err error) {
+	errLocation := "btrfl.store.DiskStore.Get"
+
+	err = d.kvs.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchValues = false
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Rewind(); it.Valid(); it.Next() {
+		  	item := it.Item()
+		  	key := string(item.KeyCopy(nil))
+		  	if search(key, comp) {
+				keys = append(keys, key)
+		  	}
+		}
+		return nil
+	})
+	if err!=nil{
+		return keys, logger.NewErr(errLocation, "Can`t make LIST iteration")
+	} else {
+		return keys, nil
+	}
+}
+
+
+func (d *DiskStore) Delete(keys []string) (kv map[string]string, err error) {
 	errLocation := "btrfl.store.DiskStore.Delete"
 
-	var valCopy []byte
+	kv = make(map[string]string)
 	err = d.kvs.Update(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(key))
-		if err != nil {
-			return logger.NewErr(errLocation, "Can`t GET value before DELETE transaction")
+		for _, k := range keys {
+			item, err := txn.Get([]byte(k))
+			if err== badger.ErrKeyNotFound {
+				return logger.NewErr(errLocation, "the key ("+k+") does not exists")
+			} else if err!=nil{
+				return logger.NewErr(errLocation, "Can`t get "+k)
+			}
+
+			var valCopy []byte
+			valCopy, err = item.ValueCopy(nil)
+
+			if err != nil {
+				return logger.NewErr(errLocation, "Can`t copy value from GET query for "+k)
+			}
+			kv[k] = string(valCopy)
+
+			err = txn.Delete([]byte(k))
+			if err!=nil{
+				return logger.NewErr(errLocation, "Can`t delete "+k)
+			}
 		}
 
-		valCopy, err = item.ValueCopy(nil)
-		if err != nil {
-			return logger.NewErr(errLocation, "Can`t copy value before DELETE transaction")
-		}
-
-		err = txn.Delete([]byte(key))
-		return err
+		return nil
 	})
 
-	value = string(valCopy)
 
 	if err != nil {
-		return value, logger.NewErr(errLocation, "Can`t make DELETE transaction")
+		return kv, logger.NewErr(errLocation, "Can`t make DELETE transaction")
 	} else {
-		return value, nil
+		return kv, nil
 	}
 
 }
