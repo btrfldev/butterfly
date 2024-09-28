@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"strings"
 
@@ -10,16 +11,20 @@ import (
 
 func main() {
 	container := btrflrun.Container{
-		Image:       "jupyter/datascience-notebook",
-		Name:        "way",
-		CallCommand: "./start-notebook.py",
-		WorkDir:     "/",
+		Image:       "redis",
+		Name:        "redis",
+		CallCommand: "redis-server",
+		WorkDir:     "/usr/local/bin",
 		Logger: logger.Logger{
 			LogToTerminal: true,
 		},
 	}
-	container.PullDockerImage("./images")
-	dir, err := os.MkdirTemp("", container.Name)
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	dir := path + "/containers/" + container.Name
+	err = os.MkdirAll(dir, 0777)
 	if err != nil {
 		panic(err)
 	}
@@ -28,6 +33,10 @@ func main() {
 	container.ContainerRootDir = dir
 
 	localImage := strings.ReplaceAll(container.Image, "/", ":")
+	if _, err := os.Stat(localImage); errors.Is(err, os.ErrNotExist) {
+		container.PullDockerImage("./images")
+	}
+
 	err = btrflrun.UnTar("./images/"+localImage+".tar.gz", container.ContainerRootDir)
 	if err != nil {
 		panic(err)

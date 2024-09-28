@@ -3,6 +3,7 @@ module github.com/iamsoloma/butterfly
 go 1.22.4
 
 require (
+	github.com/codeclysm/extract v2.2.0+incompatible
 	github.com/dgraph-io/badger/v4 v4.3.0
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/template/html/v2 v2.1.2
@@ -21,6 +22,8 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/flatbuffers v1.12.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/h2non/filetype v1.1.3 // indirect
+	github.com/juju/errors v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
