@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"syscall"
 
-	"github.com/iamsoloma/butterfly/logger"
+	"github.com/btrfldev/butterfly/logger"
 
 	"github.com/codeclysm/extract"
 )

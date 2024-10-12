@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/btrfldev/butterfly"
+	"github.com/btrfldev/butterfly/system"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iamsoloma/butterfly"
-	"github.com/iamsoloma/butterfly/system"
 )
 
 func main() {
@@ -56,7 +56,7 @@ func (s *Server) Start() error {
 	f.Get("/list", s.List)
 	f.Get("/host/:lib/*", s.Host)
 
-	return f.Listen(":"+s.listenPort)
+	return f.Listen(":" + s.listenPort)
 }
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {

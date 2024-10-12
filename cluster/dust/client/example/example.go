@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/iamsoloma/butterfly"
-	"github.com/iamsoloma/butterfly/cluster/dust/client"
+	"github.com/btrfldev/butterfly"
+	"github.com/btrfldev/butterfly/cluster/dust/client"
 )
 
 func main() {
@@ -19,13 +19,13 @@ func main() {
 			Value: "321",
 		},
 		{
-			Lib: "example",
-			Key: "Hello, Dust!",
-		    Value: "Hi!",
+			Lib:   "example",
+			Key:   "Hello, Dust!",
+			Value: "Hi!",
 		},
 	}
 
-	if err:=agent.Put(Objects);err!=nil{
+	if err := agent.Put(Objects); err != nil {
 		panic(err)
 	} else {
 		fmt.Println("Objects` are putted!")

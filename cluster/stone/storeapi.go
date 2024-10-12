@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/btrfldev/butterfly"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iamsoloma/butterfly"
 )
 
 func (s *Server) UploadFromForm(c *fiber.Ctx) error {
@@ -23,7 +23,6 @@ func (s *Server) UploadFromForm(c *fiber.Ctx) error {
 	key := c.Params("*")
 	key += "/" + file.Filename
 	keyLocal := strings.ReplaceAll(key, "/", "^")
-
 
 	_, err = os.Stat(s.StoragePath + "/" + lib)
 	if os.IsNotExist(err) {
@@ -102,7 +101,7 @@ func (s *Server) Get(c *fiber.Ctx) error {
 			return c.SendFile(s.StoragePath + lib + "/" + strings.ReplaceAll(key, "/", "^"))
 		} else {
 			//TODO: Redirect by node id
-			return c.Redirect(resp.Objects[0].Value + "/store/" + lib + "/" + key, http.StatusContinue)
+			return c.Redirect(resp.Objects[0].Value+"/store/"+lib+"/"+key, http.StatusContinue)
 		}
 
 	} else {

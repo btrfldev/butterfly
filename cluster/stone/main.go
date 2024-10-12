@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/btrfldev/butterfly"
+	"github.com/btrfldev/butterfly/system"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
-	"github.com/iamsoloma/butterfly"
-	"github.com/iamsoloma/butterfly/system"
 )
 
 func main() {
@@ -64,7 +64,7 @@ func (s *Server) Start() error {
 	ui := f.Group("/ui")
 	ui.Get("/upload", s.UploadUI)
 
-	return f.Listen(":"+s.listenPort)
+	return f.Listen(":" + s.listenPort)
 }
 
 func (s *Server) Health(c *fiber.Ctx) (err error) {

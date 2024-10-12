@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	btrflstore "github.com/iamsoloma/butterfly/store"
+	btrflstore "github.com/btrfldev/butterfly/store"
 )
 
 type Server struct {

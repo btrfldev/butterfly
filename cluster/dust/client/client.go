@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/iamsoloma/butterfly"
-	"github.com/iamsoloma/butterfly/logger"
+	"github.com/btrfldev/butterfly"
+	"github.com/btrfldev/butterfly/logger"
 )
 
 type Agent struct {
@@ -19,12 +19,10 @@ func (a *Agent) Put(objects []butterfly.Object) (err error) {
 	client := &http.Client{}
 	status := butterfly.Status{}
 
-
 	query, err := json.Marshal(butterfly.Query{Objects: objects})
 	if lerr := logger.CheckErr(err, errLocation, "Can`t marshal json"); lerr != nil {
 		panic(lerr)
 	}
-
 
 	req, err := http.NewRequest(http.MethodGet, a.DustAddress+"/put", bytes.NewBuffer(query))
 	req.Header.Set("Content-Type", "application/json")
@@ -33,7 +31,6 @@ func (a *Agent) Put(objects []butterfly.Object) (err error) {
 		panic(lerr)
 	}
 
-	
 	defer resp.Body.Close()
 	err = json.NewDecoder(resp.Body).Decode(&status)
 	if lerr := logger.CheckErr(err, errLocation, "Can`t unmarshal dust`s responce"); lerr != nil {

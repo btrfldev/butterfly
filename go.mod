@@ -1,4 +1,4 @@
-module github.com/iamsoloma/butterfly
+module github.com/btrfldev/butterfly
 
 go 1.22.4
 

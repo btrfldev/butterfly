@@ -1,8 +1,8 @@
 package store
 
 import (
+	"github.com/btrfldev/butterfly/logger"
 	"github.com/dgraph-io/badger/v4"
-	"github.com/iamsoloma/butterfly/logger"
 )
 
 // KV storage based on Badger.
@@ -83,7 +83,6 @@ func (d *DiskStore) Get(keys []string) (kv map[string]string, err error) {
 	}
 }
 
-
 func (d *DiskStore) List(search func(k string, c string) bool, comp string) (keys []string, err error) {
 	errLocation := "btrfl.store.DiskStore.Get"
 
@@ -93,21 +92,20 @@ func (d *DiskStore) List(search func(k string, c string) bool, comp string) (key
 		it := txn.NewIterator(opts)
 		defer it.Close()
 		for it.Rewind(); it.Valid(); it.Next() {
-		  	item := it.Item()
-		  	key := string(item.KeyCopy(nil))
-		  	if search(key, comp) {
+			item := it.Item()
+			key := string(item.KeyCopy(nil))
+			if search(key, comp) {
 				keys = append(keys, key)
-		  	}
+			}
 		}
 		return nil
 	})
-	if err!=nil{
+	if err != nil {
 		return keys, logger.NewErr(errLocation, "Can`t make LIST iteration")
 	} else {
 		return keys, nil
 	}
 }
-
 
 func (d *DiskStore) Delete(keys []string) (kv map[string]string, err error) {
 	errLocation := "btrfl.store.DiskStore.Delete"
@@ -116,9 +114,9 @@ func (d *DiskStore) Delete(keys []string) (kv map[string]string, err error) {
 	err = d.kvs.Update(func(txn *badger.Txn) error {
 		for _, k := range keys {
 			item, err := txn.Get([]byte(k))
-			if err== badger.ErrKeyNotFound {
+			if err == badger.ErrKeyNotFound {
 				return logger.NewErr(errLocation, "the key ("+k+") does not exists")
-			} else if err!=nil{
+			} else if err != nil {
 				return logger.NewErr(errLocation, "Can`t get "+k)
 			}
 
@@ -131,14 +129,13 @@ func (d *DiskStore) Delete(keys []string) (kv map[string]string, err error) {
 			kv[k] = string(valCopy)
 
 			err = txn.Delete([]byte(k))
-			if err!=nil{
+			if err != nil {
 				return logger.NewErr(errLocation, "Can`t delete "+k)
 			}
 		}
 
 		return nil
 	})
-
 
 	if err != nil {
 		return kv, logger.NewErr(errLocation, "Can`t make DELETE transaction")

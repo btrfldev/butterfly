@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/iamsoloma/butterfly/store/kvf"
+	"github.com/btrfldev/butterfly/store/kvf"
 )
 
 func main() {
@@ -23,7 +23,6 @@ func main() {
 	err = kvf.WriteKeySpace(WRfile, KeySpace)
 	check(err)
 
-
 	Rfile, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	check(err)
 	defer Rfile.Close()
@@ -34,7 +33,7 @@ func main() {
 }
 
 func check(err error) {
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 }

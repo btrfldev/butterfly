@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/iamsoloma/butterfly/store/kvf"
+	"github.com/btrfldev/butterfly/store/kvf"
 )
 
 func main() {

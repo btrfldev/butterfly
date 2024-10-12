@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/iamsoloma/butterfly/system"
+	"github.com/btrfldev/butterfly/system"
 )
 
 func main() {

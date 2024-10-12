@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	btrflstore "github.com/iamsoloma/butterfly/store"
+	btrflstore "github.com/btrfldev/butterfly/store"
 )
 
 func main() {
@@ -15,28 +15,28 @@ func main() {
 	example["Black"] = "White"
 	example["Cat"] = "Dog"
 	example["Chelyabinsk"] = "Chelyabinsk is the administrative center and largest city Chelyabinsk Oblast, Russia. It is the seventh-largest city in Russia, with a population of over 1.1 million people, and the second-largest city in the Ural Federal District, after Yekaterinburg. Chelyabinsk is located to the East behind the South part of the Ural Mountains and runs along the Miass River."
-	
+
 	kv, err := btrflstore.NewDiskStore(path)
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 	defer kv.CloseDiskStore()
 
 	err = kv.Put(example)
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Example are putted.")
 
 	res, err := kv.Get([]string{"Ping", "Chelyabinsk"})
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Get:")
 	printRes(res)
 
 	res, err = kv.Delete([]string{"Cat"})
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Deleted:")
@@ -49,7 +49,7 @@ func main() {
 			return false
 		}
 	}, "")
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 
@@ -57,7 +57,7 @@ func main() {
 }
 
 func printRes(res map[string]string) {
-	for k,v :=range res{
-		fmt.Println("	"+k + " : " + v)
+	for k, v := range res {
+		fmt.Println("	" + k + " : " + v)
 	}
 }

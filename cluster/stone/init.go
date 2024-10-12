@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/btrfldev/butterfly"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iamsoloma/butterfly"
 )
 
 func (s *Server) InitNode() {
@@ -115,5 +115,4 @@ func (s *Server) registerNewNode() {
 		panic("Can`t get list of nodes.")
 	}
 
-	
 }

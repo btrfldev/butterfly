@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/iamsoloma/butterfly/logger"
-	btrflrun "github.com/iamsoloma/butterfly/run"
+	"github.com/btrfldev/butterfly/logger"
+	btrflrun "github.com/btrfldev/butterfly/run"
 )
 
 func main() {
